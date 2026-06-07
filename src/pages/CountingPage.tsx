@@ -1,0 +1,144 @@
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCollection } from '../hooks/useCollection';
+import { getLatestCounts, upsertCount } from '../firebase/api';
+import { CountingCard } from '../components/CountingCard';
+import type { Category, Product } from '../db/types';
+
+const SAVE_DEBOUNCE_MS = 500;
+
+export function CountingPage() {
+  const allProducts = useCollection<Product>('products');
+  const categories = useCollection<Category>('categories');
+  const products = useMemo(() => allProducts?.filter((p) => p.active), [allProducts]);
+
+  const [search, setSearch] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState<string | 'all'>('all');
+  const [counts, setCounts] = useState<Map<string, number | null>>(new Map());
+  const [lastCountedAt, setLastCountedAt] = useState<number | null>(null);
+  const [loaded, setLoaded] = useState(false);
+
+  const timers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+
+  useEffect(() => {
+    let cancelled = false;
+    getLatestCounts().then((latest) => {
+      if (cancelled) return;
+      const initial = new Map<string, number | null>();
+      let mostRecent: number | null = null;
+      latest.forEach((value, productId) => {
+        initial.set(productId, value.quantity);
+        if (mostRecent === null || value.countedAt > mostRecent) mostRecent = value.countedAt;
+      });
+      setCounts(initial);
+      setLastCountedAt(mostRecent);
+      setLoaded(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    const timersMap = timers.current;
+    return () => {
+      timersMap.forEach((t) => clearTimeout(t));
+    };
+  }, []);
+
+  const filtered = useMemo(() => {
+    if (!products) return [];
+    return products.filter((p) => {
+      const matchesSearch = p.name.toLowerCase().includes(search.trim().toLowerCase());
+      const matchesCategory = categoryFilter === 'all' || p.categoryId === categoryFilter;
+      return matchesSearch && matchesCategory;
+    });
+  }, [products, search, categoryFilter]);
+
+  const totalCounted = useMemo(() => {
+    let total = 0;
+    counts.forEach((v) => {
+      if (v !== null) total += 1;
+    });
+    return total;
+  }, [counts]);
+
+  function handleChange(productId: string, quantity: number | null) {
+    setCounts((prev) => {
+      const next = new Map(prev);
+      next.set(productId, quantity);
+      return next;
+    });
+
+    const existingTimer = timers.current.get(productId);
+    if (existingTimer) clearTimeout(existingTimer);
+
+    if (quantity === null) return;
+
+    const timer = setTimeout(async () => {
+      await upsertCount(productId, quantity);
+      setLastCountedAt(Date.now());
+      timers.current.delete(productId);
+    }, SAVE_DEBOUNCE_MS);
+    timers.current.set(productId, timer);
+  }
+
+  return (
+    <div className="space-y-5">
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 grid grid-cols-2 gap-4">
+        <div>
+          <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Total contados</p>
+          <p className="text-2xl font-bold">{totalCounted}</p>
+        </div>
+        <div>
+          <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Última contagem</p>
+          <p className="text-sm font-medium mt-1">
+            {lastCountedAt ? new Date(lastCountedAt).toLocaleString('pt-BR') : 'Nenhuma contagem ainda'}
+          </p>
+        </div>
+      </div>
+
+      <div className="flex flex-col sm:flex-row gap-3">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Pesquisar por nome..."
+          className="flex-1 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <select
+          value={categoryFilter}
+          onChange={(e) => setCategoryFilter(e.target.value)}
+          className="rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="all">Todas as categorias</option>
+          {categories?.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {loaded && filtered.length === 0 && (
+        <p className="text-center text-slate-500 dark:text-slate-400 py-12">
+          {products?.length === 0 ? 'Nenhum produto ativo cadastrado.' : 'Nenhum produto encontrado.'}
+        </p>
+      )}
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+        {filtered.map((p) => (
+          <CountingCard
+            key={p.id}
+            product={p}
+            quantity={counts.get(p.id) ?? null}
+            onChange={(q) => handleChange(p.id, q)}
+          />
+        ))}
+      </div>
+
+      <p className="text-xs text-center text-slate-400 dark:text-slate-500">
+        Toque na foto para somar (0, 1, 2...). Use o botão "−" ou digite o valor manualmente. A contagem é salva automaticamente.
+      </p>
+    </div>
+  );
+}
