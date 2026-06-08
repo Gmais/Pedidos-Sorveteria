@@ -48,6 +48,11 @@ export function CountingPage() {
     };
   }, []);
 
+  const sortedCategories = useMemo(() => {
+    if (!categories) return [];
+    return [...categories].sort((a, b) => a.name.localeCompare(b.name));
+  }, [categories]);
+
   const filtered = useMemo(() => {
     if (!products) return [];
     return products.filter((p) => {
@@ -107,7 +112,7 @@ export function CountingPage() {
           className="rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="all">Todas as categorias</option>
-          {categories?.map((c) => (
+          {sortedCategories.map((c) => (
             <option key={c.id} value={c.id}>
               {c.name}
             </option>

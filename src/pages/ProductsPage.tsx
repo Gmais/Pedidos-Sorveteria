@@ -27,6 +27,11 @@ export function ProductsPage() {
     return map;
   }, [categories]);
 
+  const sortedCategories = useMemo(() => {
+    if (!categories) return [];
+    return [...categories].sort((a, b) => a.name.localeCompare(b.name));
+  }, [categories]);
+
   const filtered = useMemo(() => {
     if (!products) return [];
     return products.filter((p) => {
@@ -122,7 +127,7 @@ export function ProductsPage() {
           className="rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="all">Todas as categorias</option>
-          {categories?.map((c) => (
+          {sortedCategories.map((c) => (
             <option key={c.id} value={c.id}>
               {c.name}
             </option>
@@ -200,7 +205,7 @@ export function ProductsPage() {
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? 'Editar produto' : 'Novo produto'}>
         {saveError && <p className="mb-3 text-sm text-red-600 dark:text-red-400">{saveError}</p>}
         <ProductForm
-          categories={categories ?? []}
+          categories={sortedCategories}
           initial={editing}
           onCancel={() => setModalOpen(false)}
           onSubmit={handleSubmit}
