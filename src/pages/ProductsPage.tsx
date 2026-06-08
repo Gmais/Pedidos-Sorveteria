@@ -17,6 +17,8 @@ export function ProductsPage() {
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string | 'all'>('all');
   const [modalOpen, setModalOpen] = useState(false);
+  const [categoryModalOpen, setCategoryModalOpen] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
   const [editing, setEditing] = useState<Product | undefined>(undefined);
   const [deleting, setDeleting] = useState<Product | undefined>(undefined);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -102,6 +104,19 @@ export function ProductsPage() {
     }
   }
 
+  async function handleCreateCategory(e: React.FormEvent) {
+    e.preventDefault();
+    if (!newCategoryName.trim()) return;
+    try {
+      await createCategory(newCategoryName.trim(), activeStore);
+      setCategoryModalOpen(false);
+      setNewCategoryName('');
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao criar categoria.');
+    }
+  }
+
   async function handleDelete() {
     if (!deleting) return;
     await deleteProduct(deleting);
@@ -121,18 +136,27 @@ export function ProductsPage() {
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3">
-        <select
-          value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value)}
-          className="rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="all">Todas as categorias</option>
-          {sortedCategories.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
+        <div className="flex gap-2">
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 flex-1 sm:flex-none"
+          >
+            <option value="all">Todas as categorias</option>
+            {sortedCategories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+          <button
+            onClick={() => setCategoryModalOpen(true)}
+            title="Nova categoria"
+            className="flex items-center justify-center px-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-700 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+          >
+            +
+          </button>
+        </div>
         <input
           type="text"
           value={search}
@@ -231,6 +255,38 @@ export function ProductsPage() {
             Excluir
           </button>
         </div>
+      </Modal>
+
+      <Modal open={categoryModalOpen} onClose={() => setCategoryModalOpen(false)} title="Nova categoria">
+        <form onSubmit={handleCreateCategory}>
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1">Nome da categoria</label>
+            <input
+              type="text"
+              value={newCategoryName}
+              onChange={(e) => setNewCategoryName(e.target.value)}
+              className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Ex: Picolés"
+              autoFocus
+            />
+          </div>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => setCategoryModalOpen(false)}
+              className="flex-1 px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 font-medium hover:bg-slate-50 dark:hover:bg-slate-700"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={!newCategoryName.trim()}
+              className="flex-1 px-4 py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 disabled:opacity-60"
+            >
+              Criar
+            </button>
+          </div>
+        </form>
       </Modal>
     </div>
   );
