@@ -203,7 +203,7 @@ export function OrderPage() {
               key={item.product.id}
               className={`rounded-xl border p-3 flex items-center gap-3 transition-colors ${
                 ordered 
-                  ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-300 dark:border-emerald-700 opacity-80' 
+                  ? 'bg-emerald-100 dark:bg-emerald-800/50 border-emerald-400 dark:border-emerald-500' 
                   : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'
               }`}
             >
