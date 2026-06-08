@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useCollection } from '../hooks/useCollection';
-import { addOrderItem, getLatestCounts, getOrCreateTodayOrder, setOrderItemStatus } from '../firebase/api';
+import { addOrderItem, getLatestCounts, getOrCreateTodayOrder, setOrderItemStatus, deleteTodayOrderAndCounts } from '../firebase/api';
 import { ProductPhoto } from '../components/ProductPhoto';
 import { exportOrderToPdf, exportOrderToExcel, shareOnWhatsApp } from '../utils/exportOrder';
 import type { Category, OrderItem, Product } from '../db/types';
@@ -21,6 +21,7 @@ export function OrderPage() {
   const [latestCounts, setLatestCounts] = useState<Map<string, { quantity: number; countedAt: number }>>(new Map());
   const [exporting, setExporting] = useState<string | null>(null);
   const [toggling, setToggling] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -123,6 +124,24 @@ export function OrderPage() {
     shareOnWhatsApp(itemsToExport);
   }
 
+  async function handleDeleteOrder() {
+    if (!window.confirm('Tem certeza que deseja apagar o pedido e ZERAR todas as contagens feitas hoje? Esta ação não pode ser desfeita e a lista ficará vazia.')) {
+      return;
+    }
+    setDeleting(true);
+    try {
+      await deleteTodayOrderAndCounts();
+      setLatestCounts(new Map());
+      const m = await getLatestCounts();
+      setLatestCounts(m);
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao excluir pedido');
+    } finally {
+      setDeleting(false);
+    }
+  }
+
   const hasItems = pendingItems.length > 0;
 
   return (
@@ -153,6 +172,13 @@ export function OrderPage() {
             className="px-4 py-2.5 rounded-lg bg-green-500 text-white text-sm font-medium hover:bg-green-600 flex items-center gap-2"
           >
             💬 Compartilhar no WhatsApp
+          </button>
+          <button
+            onClick={handleDeleteOrder}
+            disabled={deleting}
+            className="px-4 py-2.5 rounded-lg bg-slate-200 dark:bg-slate-700 text-red-600 dark:text-red-400 text-sm font-medium hover:bg-red-50 dark:hover:bg-red-900/30 disabled:opacity-60 flex items-center gap-2 ml-auto"
+          >
+            🗑️ {deleting ? 'Excluindo...' : 'Excluir pedido'}
           </button>
         </div>
       )}
