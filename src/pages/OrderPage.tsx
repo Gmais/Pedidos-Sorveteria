@@ -78,8 +78,9 @@ export function OrderPage() {
         countedQuantity: item.countedQuantity,
         quantityToOrder: item.quantityToOrder,
         status: item.orderItem?.status ?? 'pending',
+        storeId: activeStore,
       })),
-    [pendingItems]
+    [pendingItems, activeStore]
   );
 
   async function toggleOrdered(item: PendingItem) {
