@@ -116,13 +116,6 @@ export function ProductsPage() {
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3">
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Pesquisar por nome..."
-          className="flex-1 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
         <select
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
@@ -135,6 +128,13 @@ export function ProductsPage() {
             </option>
           ))}
         </select>
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Pesquisar por nome..."
+          className="flex-1 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
       </div>
 
       {filtered.length === 0 && (
