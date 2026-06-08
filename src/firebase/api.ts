@@ -111,13 +111,21 @@ export async function toggleProductFavorite(productId: string, favorite: boolean
 export async function getOrCreateTodayOrder(storeId: StoreId): Promise<string> {
   await authReady;
   const now = Date.now();
-  const q = query(collection(firestore, 'orders'), where('storeId', '==', storeId), orderBy('createdAt', 'desc'), limit(1));
+  const q = query(collection(firestore, 'orders'), where('storeId', '==', storeId));
   const snapshot = await getDocs(q);
+  
   if (!snapshot.empty) {
-    const docSnap = snapshot.docs[0];
+    const sortedDocs = snapshot.docs.sort((a, b) => {
+      const dataA = a.data() as Omit<Order, 'id'>;
+      const dataB = b.data() as Omit<Order, 'id'>;
+      return dataB.createdAt - dataA.createdAt;
+    });
+    
+    const docSnap = sortedDocs[0];
     const data = docSnap.data() as Omit<Order, 'id'>;
     if (isSameDay(data.createdAt, now)) return docSnap.id;
   }
+  
   const ref = await addDoc(collection(firestore, 'orders'), { createdAt: now, storeId } satisfies Omit<Order, 'id'>);
   return ref.id;
 }
