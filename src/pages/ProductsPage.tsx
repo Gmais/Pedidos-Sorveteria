@@ -38,29 +38,26 @@ export function ProductsPage() {
     if (!products) return [];
     return products.filter((p) => {
       const matchesSearch = p.name.toLowerCase().includes(search.trim().toLowerCase());
-      const matchesCategory = categoryFilter === 'all' || p.categoryId === categoryFilter;
+      const matchesCategory = 
+        categoryFilter === 'all' 
+          ? true 
+          : categoryFilter === 'favorites'
+            ? p.favorite
+            : p.categoryId === categoryFilter;
       return matchesSearch && matchesCategory;
     });
   }, [products, search, categoryFilter]);
 
   const grouped = useMemo(() => {
     const groups = new Map<string, Product[]>();
-    const favorites: Product[] = [];
 
     for (const p of filtered) {
-      if (p.favorite) favorites.push(p);
-      
       const catName = categoryById.get(p.categoryId) ?? 'Sem categoria';
       if (!groups.has(catName)) groups.set(catName, []);
       groups.get(catName)!.push(p);
     }
 
-    const sortedGroups = Array.from(groups.entries()).sort((a, b) => a[0].localeCompare(b[0]));
-    if (favorites.length > 0) {
-      sortedGroups.push(['Favoritos ⭐', favorites]);
-    }
-    
-    return sortedGroups;
+    return Array.from(groups.entries()).sort((a, b) => a[0].localeCompare(b[0]));
   }, [filtered, categoryById]);
 
   async function handleToggleFavorite(e: React.MouseEvent, p: Product) {
@@ -163,6 +160,7 @@ export function ProductsPage() {
             className="rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 flex-1 sm:flex-none"
           >
             <option value="all">Todas as categorias</option>
+            <option value="favorites">Favoritos ⭐</option>
             {sortedCategories.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.name}

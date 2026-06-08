@@ -57,7 +57,12 @@ export function CountingPage() {
     if (!products) return [];
     return products.filter((p) => {
       const matchesSearch = p.name.toLowerCase().includes(search.trim().toLowerCase());
-      const matchesCategory = categoryFilter === 'all' || p.categoryId === categoryFilter;
+      const matchesCategory = 
+        categoryFilter === 'all' 
+          ? true 
+          : categoryFilter === 'favorites'
+            ? p.favorite
+            : p.categoryId === categoryFilter;
       return matchesSearch && matchesCategory;
     });
   }, [products, search, categoryFilter]);
@@ -106,13 +111,14 @@ export function CountingPage() {
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3">
-        <select
-          value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value)}
-          className="rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="all">Todas as categorias</option>
-          {sortedCategories.map((c) => (
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="all">Todas as categorias</option>
+            <option value="favorites">Favoritos ⭐</option>
+            {sortedCategories.map((c) => (
             <option key={c.id} value={c.id}>
               {c.name}
             </option>
