@@ -200,10 +200,10 @@ export function ProductsPage() {
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
               {items.map((p) => (
-                <button
+                <div
                   key={p.id}
                   onClick={() => openEdit(p)}
-                  className="text-left bg-white dark:bg-slate-800 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow"
+                  className="text-left bg-white dark:bg-slate-800 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow cursor-pointer flex flex-col h-full relative"
                 >
                   <div className="relative">
                     <ProductPhoto photoUrl={p.photoUrl} name={p.name} className="w-full aspect-square" />
@@ -235,14 +235,14 @@ export function ProductsPage() {
                       </svg>
                     </button>
                   </div>
-                  <div className="p-2.5">
+                  <div className="p-2.5 flex-1">
                     <p className="font-medium text-sm truncate">{p.name}</p>
                     <p className="text-xs text-slate-500 dark:text-slate-400">
                       Ideal: {p.idealQuantity} {p.unit}
                     </p>
                   </div>
                   <div className="px-2.5 pb-2.5 flex gap-2">
-                    <span
+                    <button
                       onClick={(e) => {
                         e.stopPropagation();
                         openEdit(p);
@@ -250,8 +250,8 @@ export function ProductsPage() {
                       className="flex-1 text-center text-xs font-medium px-2 py-1.5 rounded-md bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600"
                     >
                       Editar
-                    </span>
-                    <span
+                    </button>
+                    <button
                       onClick={(e) => {
                         e.stopPropagation();
                         setDeleting(p);
@@ -259,9 +259,9 @@ export function ProductsPage() {
                       className="flex-1 text-center text-xs font-medium px-2 py-1.5 rounded-md bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/50"
                     >
                       Excluir
-                    </span>
+                    </button>
                   </div>
-                </button>
+                </div>
               ))}
             </div>
           </section>
