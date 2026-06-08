@@ -26,7 +26,8 @@ export function Layout() {
       <header className="sticky top-0 z-20 bg-guri-blue text-white shadow-md">
         <div className="max-w-5xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
           <h1 className="text-lg sm:text-xl font-bold flex items-center gap-2">
-            🍦 Controle de estoque
+            <img src="/logo.png" alt="Logo Sorvetes Guri" className="w-8 h-8 rounded-full object-cover bg-white p-0.5" />
+            Controle de estoque
           </h1>
           
           <div className="flex bg-black/20 p-1 rounded-lg backdrop-blur-sm">
