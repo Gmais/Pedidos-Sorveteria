@@ -1,6 +1,9 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { signOut } from 'firebase/auth';
 import { useTheme } from '../contexts/ThemeContext';
 import { useStore } from '../contexts/StoreContext';
+import { useAuth } from '../contexts/AuthContext';
+import { auth } from '../firebase/config';
 import type { StoreId } from '../db/types';
 
 const NAV_ITEMS = [
@@ -20,12 +23,18 @@ const STORE_OPTIONS: { id: StoreId; label: string }[] = [
 export function Layout() {
   const { theme, toggleTheme } = useTheme();
   const { activeStore, setActiveStore } = useStore();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const handleStoreSwitch = (id: StoreId) => {
     setActiveStore(id);
     navigate('/');
   };
+
+  async function handleLogout() {
+    await signOut(auth);
+    navigate('/login');
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans">
@@ -52,13 +61,25 @@ export function Layout() {
             ))}
           </div>
 
-          <button
-            onClick={toggleTheme}
-            aria-label="Alternar modo claro/escuro"
-            className="hidden sm:flex rounded-full w-11 h-11 items-center justify-center text-xl bg-black/20 hover:bg-black/30 transition-colors backdrop-blur-sm"
-          >
-            {theme === 'dark' ? '☀️' : '🌙'}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={toggleTheme}
+              aria-label="Alternar modo claro/escuro"
+              className="hidden sm:flex rounded-full w-9 h-9 items-center justify-center text-lg bg-black/20 hover:bg-black/30 transition-colors backdrop-blur-sm"
+            >
+              {theme === 'dark' ? '☀️' : '🌙'}
+            </button>
+            {user && (
+              <button
+                onClick={handleLogout}
+                title={`Sair (${user.email})`}
+                className="flex items-center gap-1.5 rounded-lg bg-black/20 hover:bg-red-600/80 transition-colors px-3 py-1.5 text-sm font-medium backdrop-blur-sm"
+              >
+                <span className="hidden sm:inline truncate max-w-[120px] text-blue-100">{user.email}</span>
+                <span>🚪</span>
+              </button>
+            )}
+          </div>
         </div>
         <nav className="border-t border-blue-600/30 sm:border-t-0 bg-black/10 sm:bg-transparent">
           <div className="max-w-5xl mx-auto grid grid-cols-5 sm:flex sm:justify-center sm:gap-2 sm:py-2">

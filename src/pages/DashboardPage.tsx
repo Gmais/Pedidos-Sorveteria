@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useCollection } from '../hooks/useCollection';
 import { getLatestCounts, getLatestCountTimestamp } from '../firebase/api';
 import { useStore } from '../contexts/StoreContext';
+import { useAuth } from '../contexts/AuthContext';
 import type { Category, Product } from '../db/types';
 
 function StatCard({ label, value, icon, to }: { label: string; value: string | number; icon: string; to?: string }) {
@@ -22,13 +23,15 @@ export function DashboardPage() {
   const products = useCollection<Product>('products');
   const categories = useCollection<Category>('categories');
   const { activeStore } = useStore();
+  const { user } = useAuth();
+  const tenantId = user?.tenantId ?? '';
 
   const [latestCounts, setLatestCounts] = useState<Map<string, { quantity: number; countedAt: number }>>(new Map());
   const [lastCountAt, setLastCountAt] = useState<number | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    Promise.all([getLatestCounts(activeStore), getLatestCountTimestamp(activeStore)]).then(([counts, ts]) => {
+    Promise.all([getLatestCounts(activeStore, tenantId), getLatestCountTimestamp(activeStore, tenantId)]).then(([counts, ts]) => {
       if (cancelled) return;
       setLatestCounts(counts);
       setLastCountAt(ts);

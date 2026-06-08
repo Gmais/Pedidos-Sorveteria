@@ -4,6 +4,7 @@ import { addOrderItem, getLatestCounts, getOrCreateTodayOrder, setOrderItemStatu
 import { ProductPhoto } from '../components/ProductPhoto';
 import { exportOrderToPdf, exportOrderToExcel, shareOnWhatsApp } from '../utils/exportOrder';
 import { useStore } from '../contexts/StoreContext';
+import { useAuth } from '../contexts/AuthContext';
 import type { Category, OrderItem, Product } from '../db/types';
 
 interface PendingItem {
@@ -19,6 +20,8 @@ export function OrderPage() {
   const categories = useCollection<Category>('categories');
   const orderItems = useCollection<OrderItem>('orderItems');
   const { activeStore } = useStore();
+  const { user } = useAuth();
+  const tenantId = user?.tenantId ?? '';
 
   const [latestCounts, setLatestCounts] = useState<Map<string, { quantity: number; countedAt: number }>>(new Map());
   const [exporting, setExporting] = useState<string | null>(null);
@@ -27,7 +30,7 @@ export function OrderPage() {
 
   useEffect(() => {
     let cancelled = false;
-    getLatestCounts(activeStore).then((m) => {
+    getLatestCounts(activeStore, tenantId).then((m) => {
       if (cancelled) return;
       setLatestCounts(m);
     });
@@ -83,8 +86,9 @@ export function OrderPage() {
         quantityToOrder: item.quantityToOrder,
         status: item.orderItem?.status ?? 'pending',
         storeId: activeStore,
+        tenantId,
       })),
-    [pendingItems, activeStore]
+    [pendingItems, activeStore, tenantId]
   );
 
   async function toggleOrdered(item: PendingItem) {
@@ -94,7 +98,7 @@ export function OrderPage() {
         const newStatus = item.orderItem.status === 'ordered' ? 'pending' : 'ordered';
         await setOrderItemStatus(item.orderItem.id, newStatus);
       } else {
-        const orderId = await getOrCreateTodayOrder(activeStore);
+        const orderId = await getOrCreateTodayOrder(activeStore, tenantId);
         await addOrderItem({
           orderId,
           productId: item.product.id,
@@ -105,6 +109,7 @@ export function OrderPage() {
           quantityToOrder: item.quantityToOrder,
           status: 'ordered',
           storeId: activeStore,
+          tenantId,
         });
       }
     } catch (err) {
@@ -142,7 +147,7 @@ export function OrderPage() {
     }
     setDeleting(true);
     try {
-      await deleteCountForProduct(activeStore, item.product.id);
+      await deleteCountForProduct(activeStore, item.product.id, tenantId);
       const newCounts = new Map(latestCounts);
       newCounts.delete(item.product.id);
       setLatestCounts(newCounts);

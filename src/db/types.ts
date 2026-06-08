@@ -4,6 +4,7 @@ export interface Category {
   id: string;
   name: string;
   storeId: StoreId;
+  tenantId: string;
 }
 
 export interface Product {
@@ -16,6 +17,7 @@ export interface Product {
   photoUrl?: string;
   storeId: StoreId;
   favorite?: boolean;
+  tenantId: string;
 }
 
 export interface CountEntry {
@@ -24,6 +26,7 @@ export interface CountEntry {
   quantity: number;
   countedAt: number;
   storeId: StoreId;
+  tenantId: string;
 }
 
 export type OrderItemStatus = 'pending' | 'ordered';
@@ -39,12 +42,14 @@ export interface OrderItem {
   quantityToOrder: number;
   status: OrderItemStatus;
   storeId: StoreId;
+  tenantId: string;
 }
 
 export interface Order {
   id: string;
   createdAt: number;
   storeId: StoreId;
+  tenantId: string;
 }
 
 export const UNITS = [

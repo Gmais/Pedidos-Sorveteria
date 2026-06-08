@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
-import { getAuth, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyATEZW_ALNBv92F-A9hbFwnFWpJDR69V9g",
@@ -19,10 +19,10 @@ export const authReady = new Promise<void>((resolve) => {
   readyResolve = resolve;
 });
 
-onAuthStateChanged(auth, (user) => {
-  if (user) {
+let authInitialized = false;
+onAuthStateChanged(auth, () => {
+  if (!authInitialized) {
+    authInitialized = true;
     readyResolve();
-  } else {
-    signInAnonymously(auth).catch((err) => console.error('Falha ao autenticar anonimamente', err));
   }
 });

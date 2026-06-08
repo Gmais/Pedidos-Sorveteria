@@ -4,6 +4,7 @@ import { useCollection } from '../hooks/useCollection';
 import { addProduct, createCategory, deleteProduct, updateProduct, toggleProductFavorite } from '../firebase/api';
 import { uploadProductPhoto } from '../cloudinary/api';
 import { useStore } from '../contexts/StoreContext';
+import { useAuth } from '../contexts/AuthContext';
 import type { Category, Product } from '../db/types';
 import { ProductPhoto } from '../components/ProductPhoto';
 import { Modal } from '../components/Modal';
@@ -11,6 +12,8 @@ import { ProductForm, type ProductFormResult } from '../components/ProductForm';
 
 export function ProductsPage() {
   const { activeStore } = useStore();
+  const { user } = useAuth();
+  const tenantId = user?.tenantId ?? '';
   const products = useCollection<Product>('products');
   const categories = useCollection<Category>('categories');
 
@@ -111,6 +114,7 @@ export function ProductsPage() {
         unit: data.unit,
         active: data.active,
         storeId: activeStore,
+        tenantId,
       };
 
       if (editing) {
@@ -120,7 +124,7 @@ export function ProductsPage() {
           ...(clearPhoto ? { photoUrl: deleteField() } : {}),
         });
       } else {
-        await addProduct({ ...base, ...(photoUrl ? { photoUrl } : {}) });
+        await addProduct({ ...base, ...(photoUrl ? { photoUrl } : {}), tenantId });
       }
       setModalOpen(false);
       setEditing(undefined);
@@ -134,7 +138,7 @@ export function ProductsPage() {
     e.preventDefault();
     if (!newCategoryName.trim()) return;
     try {
-      await createCategory(newCategoryName.trim(), activeStore);
+      await createCategory(newCategoryName.trim(), activeStore, tenantId);
       setCategoryModalOpen(false);
       setNewCategoryName('');
     } catch (err) {
@@ -282,7 +286,7 @@ export function ProductsPage() {
           initial={editing}
           onCancel={() => setModalOpen(false)}
           onSubmit={handleSubmit}
-          onCreateCategory={(name) => createCategory(name, activeStore)}
+          onCreateCategory={(name) => createCategory(name, activeStore, tenantId)}
         />
       </Modal>
 
