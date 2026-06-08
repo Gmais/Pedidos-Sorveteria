@@ -14,7 +14,7 @@ export function CountingCard({ product, quantity, onChange }: CountingCardProps)
 
   function handleDecrement() {
     if (quantity === null) return;
-    onChange(quantity > 0 ? quantity - 1 : 0);
+    onChange(quantity > 0 ? quantity - 1 : null);
   }
 
   function handleManualChange(e: React.ChangeEvent<HTMLInputElement>) {
