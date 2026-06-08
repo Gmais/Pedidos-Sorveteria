@@ -1,6 +1,9 @@
+export type StoreId = 'sorvetes' | 'distribuidora' | 'mercado';
+
 export interface Category {
   id: string;
   name: string;
+  storeId: StoreId;
 }
 
 export interface Product {
@@ -11,6 +14,7 @@ export interface Product {
   unit: string;
   active: boolean;
   photoUrl?: string;
+  storeId: StoreId;
 }
 
 export interface CountEntry {
@@ -18,6 +22,7 @@ export interface CountEntry {
   productId: string;
   quantity: number;
   countedAt: number;
+  storeId: StoreId;
 }
 
 export type OrderItemStatus = 'pending' | 'ordered';
@@ -32,11 +37,13 @@ export interface OrderItem {
   countedQuantity: number;
   quantityToOrder: number;
   status: OrderItemStatus;
+  storeId: StoreId;
 }
 
 export interface Order {
   id: string;
   createdAt: number;
+  storeId: StoreId;
 }
 
 export const UNITS = [

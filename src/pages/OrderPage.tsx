@@ -3,6 +3,7 @@ import { useCollection } from '../hooks/useCollection';
 import { addOrderItem, getLatestCounts, getOrCreateTodayOrder, setOrderItemStatus, deleteCountForProduct } from '../firebase/api';
 import { ProductPhoto } from '../components/ProductPhoto';
 import { exportOrderToPdf, exportOrderToExcel, shareOnWhatsApp } from '../utils/exportOrder';
+import { useStore } from '../contexts/StoreContext';
 import type { Category, OrderItem, Product } from '../db/types';
 
 interface PendingItem {
@@ -17,6 +18,7 @@ export function OrderPage() {
   const products = useCollection<Product>('products');
   const categories = useCollection<Category>('categories');
   const orderItems = useCollection<OrderItem>('orderItems');
+  const { activeStore } = useStore();
 
   const [latestCounts, setLatestCounts] = useState<Map<string, { quantity: number; countedAt: number }>>(new Map());
   const [exporting, setExporting] = useState<string | null>(null);
@@ -25,13 +27,14 @@ export function OrderPage() {
 
   useEffect(() => {
     let cancelled = false;
-    getLatestCounts().then((m) => {
-      if (!cancelled) setLatestCounts(m);
+    getLatestCounts(activeStore).then((m) => {
+      if (cancelled) return;
+      setLatestCounts(m);
     });
     return () => {
       cancelled = true;
     };
-  }, [orderItems]);
+  }, [activeStore, orderItems]);
 
   const categoryById = useMemo(() => {
     const map = new Map<string, string>();
@@ -83,20 +86,24 @@ export function OrderPage() {
     setToggling(item.product.id);
     try {
       if (item.orderItem) {
-        await setOrderItemStatus(item.orderItem.id, item.orderItem.status === 'ordered' ? 'pending' : 'ordered');
-        return;
+        const newStatus = item.orderItem.status === 'ordered' ? 'pending' : 'ordered';
+        await setOrderItemStatus(item.orderItem.id, newStatus);
+      } else {
+        const orderId = await getOrCreateTodayOrder(activeStore);
+        await addOrderItem({
+          orderId,
+          productId: item.product.id,
+          productName: item.product.name,
+          categoryName: item.categoryName,
+          idealQuantity: item.product.idealQuantity,
+          countedQuantity: item.countedQuantity,
+          quantityToOrder: item.quantityToOrder,
+          status: 'ordered',
+          storeId: activeStore,
+        });
       }
-      const orderId = await getOrCreateTodayOrder();
-      await addOrderItem({
-        orderId,
-        productId: item.product.id,
-        productName: item.product.name,
-        categoryName: item.categoryName,
-        idealQuantity: item.product.idealQuantity,
-        countedQuantity: item.countedQuantity,
-        quantityToOrder: item.quantityToOrder,
-        status: 'ordered',
-      });
+    } catch (err) {
+      console.error(err);
     } finally {
       setToggling(null);
     }
@@ -130,7 +137,7 @@ export function OrderPage() {
     }
     setDeleting(true);
     try {
-      await deleteCountForProduct(item.product.id);
+      await deleteCountForProduct(activeStore, item.product.id);
       const newCounts = new Map(latestCounts);
       newCounts.delete(item.product.id);
       setLatestCounts(newCounts);

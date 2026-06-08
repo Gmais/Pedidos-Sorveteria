@@ -2,11 +2,13 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useCollection } from '../hooks/useCollection';
 import { getLatestCounts, upsertCount } from '../firebase/api';
 import { CountingCard } from '../components/CountingCard';
+import { useStore } from '../contexts/StoreContext';
 import type { Category, Product } from '../db/types';
 
 const SAVE_DEBOUNCE_MS = 500;
 
 export function CountingPage() {
+  const { activeStore } = useStore();
   const allProducts = useCollection<Product>('products');
   const categories = useCollection<Category>('categories');
   const products = useMemo(() => allProducts?.filter((p) => p.active), [allProducts]);
@@ -20,8 +22,9 @@ export function CountingPage() {
   const timers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   useEffect(() => {
+    if (!activeStore) return;
     let cancelled = false;
-    getLatestCounts().then((latest) => {
+    getLatestCounts(activeStore).then((latest) => {
       if (cancelled) return;
       const initial = new Map<string, number | null>();
       let mostRecent: number | null = null;
@@ -75,7 +78,7 @@ export function CountingPage() {
     if (quantity === null) return;
 
     const timer = setTimeout(async () => {
-      await upsertCount(productId, quantity);
+      await upsertCount(activeStore, productId, quantity);
       setLastCountedAt(Date.now());
       timers.current.delete(productId);
     }, SAVE_DEBOUNCE_MS);

@@ -1,5 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
+import { useStore } from '../contexts/StoreContext';
+import type { StoreId } from '../db/types';
 
 const NAV_ITEMS = [
   { to: '/', label: 'Início', icon: '🏠' },
@@ -9,20 +11,44 @@ const NAV_ITEMS = [
   { to: '/criticos', label: 'Críticos', icon: '⚠️' },
 ];
 
+const STORE_OPTIONS: { id: StoreId; label: string }[] = [
+  { id: 'sorvetes', label: 'Sorvetes' },
+  { id: 'distribuidora', label: 'Distribuidora' },
+  { id: 'mercado', label: 'Mercado' }
+];
+
 export function Layout() {
   const { theme, toggleTheme } = useTheme();
+  const { activeStore, setActiveStore } = useStore();
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
       <header className="sticky top-0 z-20 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-sm">
-        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
           <h1 className="text-lg sm:text-xl font-bold flex items-center gap-2">
             🍦 Controle de estoque
           </h1>
+          
+          <div className="flex bg-slate-100 dark:bg-slate-700 p-1 rounded-lg">
+            {STORE_OPTIONS.map((option) => (
+              <button
+                key={option.id}
+                onClick={() => setActiveStore(option.id)}
+                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                  activeStore === option.id
+                    ? 'bg-white dark:bg-slate-600 shadow-sm text-blue-600 dark:text-blue-400'
+                    : 'text-slate-500 dark:text-slate-300 hover:text-slate-700 dark:hover:text-slate-100'
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+
           <button
             onClick={toggleTheme}
             aria-label="Alternar modo claro/escuro"
-            className="rounded-full w-11 h-11 flex items-center justify-center text-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+            className="hidden sm:flex rounded-full w-11 h-11 items-center justify-center text-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
           >
             {theme === 'dark' ? '☀️' : '🌙'}
           </button>

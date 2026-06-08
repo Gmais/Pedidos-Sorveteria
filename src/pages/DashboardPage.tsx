@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCollection } from '../hooks/useCollection';
 import { getLatestCounts, getLatestCountTimestamp } from '../firebase/api';
+import { useStore } from '../contexts/StoreContext';
 import type { Category, Product } from '../db/types';
 
 function StatCard({ label, value, icon, to }: { label: string; value: string | number; icon: string; to?: string }) {
@@ -20,13 +21,14 @@ function StatCard({ label, value, icon, to }: { label: string; value: string | n
 export function DashboardPage() {
   const products = useCollection<Product>('products');
   const categories = useCollection<Category>('categories');
+  const { activeStore } = useStore();
 
   const [latestCounts, setLatestCounts] = useState<Map<string, { quantity: number; countedAt: number }>>(new Map());
   const [lastCountAt, setLastCountAt] = useState<number | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    Promise.all([getLatestCounts(), getLatestCountTimestamp()]).then(([counts, ts]) => {
+    Promise.all([getLatestCounts(activeStore), getLatestCountTimestamp(activeStore)]).then(([counts, ts]) => {
       if (cancelled) return;
       setLatestCounts(counts);
       setLastCountAt(ts);
@@ -34,7 +36,7 @@ export function DashboardPage() {
     return () => {
       cancelled = true;
     };
-  }, [products]);
+  }, [products, activeStore]);
 
   const belowIdeal = useMemo(() => {
     if (!products) return 0;

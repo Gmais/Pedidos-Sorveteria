@@ -13,7 +13,7 @@ import {
   type FieldValue,
 } from 'firebase/firestore';
 import { firestore, authReady } from './config';
-import type { Category, CountEntry, Order, OrderItem, OrderItemStatus, Product } from '../db/types';
+import type { Category, CountEntry, Order, OrderItem, OrderItemStatus, Product, StoreId } from '../db/types';
 
 function isSameDay(a: number, b: number) {
   const da = new Date(a);
@@ -27,9 +27,9 @@ function isSameDay(a: number, b: number) {
 
 // ---- Categories ----
 
-export async function createCategory(name: string): Promise<string> {
+export async function createCategory(name: string, storeId: StoreId): Promise<string> {
   await authReady;
-  const ref = await addDoc(collection(firestore, 'categories'), { name } satisfies Omit<Category, 'id'>);
+  const ref = await addDoc(collection(firestore, 'categories'), { name, storeId } satisfies Omit<Category, 'id'>);
   return ref.id;
 }
 
@@ -56,10 +56,10 @@ export async function deleteProduct(product: Product): Promise<void> {
 
 // ---- Counts ----
 
-export async function upsertCount(productId: string, quantity: number): Promise<void> {
+export async function upsertCount(storeId: StoreId, productId: string, quantity: number): Promise<void> {
   await authReady;
   const now = Date.now();
-  const q = query(collection(firestore, 'counts'), where('productId', '==', productId));
+  const q = query(collection(firestore, 'counts'), where('storeId', '==', storeId), where('productId', '==', productId));
   const snapshot = await getDocs(q);
 
   const entries: { ref: DocumentReference; countedAt: number }[] = snapshot.docs.map((docSnap) => ({
@@ -75,12 +75,13 @@ export async function upsertCount(productId: string, quantity: number): Promise<
     await updateDoc(latest.ref, { quantity, countedAt: now });
     return;
   }
-  await addDoc(collection(firestore, 'counts'), { productId, quantity, countedAt: now } satisfies Omit<CountEntry, 'id'>);
+  await addDoc(collection(firestore, 'counts'), { storeId, productId, quantity, countedAt: now } satisfies Omit<CountEntry, 'id'>);
 }
 
-export async function getLatestCounts(): Promise<Map<string, { quantity: number; countedAt: number }>> {
+export async function getLatestCounts(storeId: StoreId): Promise<Map<string, { quantity: number; countedAt: number }>> {
   await authReady;
-  const snapshot = await getDocs(collection(firestore, 'counts'));
+  const q = query(collection(firestore, 'counts'), where('storeId', '==', storeId));
+  const snapshot = await getDocs(q);
   const map = new Map<string, { quantity: number; countedAt: number }>();
   snapshot.forEach((docSnap) => {
     const data = docSnap.data() as Omit<CountEntry, 'id'>;
@@ -92,9 +93,9 @@ export async function getLatestCounts(): Promise<Map<string, { quantity: number;
   return map;
 }
 
-export async function getLatestCountTimestamp(): Promise<number | null> {
+export async function getLatestCountTimestamp(storeId: StoreId): Promise<number | null> {
   await authReady;
-  const q = query(collection(firestore, 'counts'), orderBy('countedAt', 'desc'), limit(1));
+  const q = query(collection(firestore, 'counts'), where('storeId', '==', storeId), orderBy('countedAt', 'desc'), limit(1));
   const snapshot = await getDocs(q);
   if (snapshot.empty) return null;
   return (snapshot.docs[0].data() as Omit<CountEntry, 'id'>).countedAt;
@@ -102,17 +103,17 @@ export async function getLatestCountTimestamp(): Promise<number | null> {
 
 // ---- Orders ----
 
-export async function getOrCreateTodayOrder(): Promise<string> {
+export async function getOrCreateTodayOrder(storeId: StoreId): Promise<string> {
   await authReady;
   const now = Date.now();
-  const q = query(collection(firestore, 'orders'), orderBy('createdAt', 'desc'), limit(1));
+  const q = query(collection(firestore, 'orders'), where('storeId', '==', storeId), orderBy('createdAt', 'desc'), limit(1));
   const snapshot = await getDocs(q);
   if (!snapshot.empty) {
     const docSnap = snapshot.docs[0];
     const data = docSnap.data() as Omit<Order, 'id'>;
     if (isSameDay(data.createdAt, now)) return docSnap.id;
   }
-  const ref = await addDoc(collection(firestore, 'orders'), { createdAt: now } satisfies Omit<Order, 'id'>);
+  const ref = await addDoc(collection(firestore, 'orders'), { createdAt: now, storeId } satisfies Omit<Order, 'id'>);
   return ref.id;
 }
 
@@ -127,10 +128,10 @@ export async function setOrderItemStatus(id: string, status: OrderItemStatus): P
   await updateDoc(doc(firestore, 'orderItems', id), { status });
 }
 
-export async function deleteCountForProduct(productId: string): Promise<void> {
+export async function deleteCountForProduct(storeId: StoreId, productId: string): Promise<void> {
   await authReady;
   const now = Date.now();
-  const q = query(collection(firestore, 'counts'), where('productId', '==', productId));
+  const q = query(collection(firestore, 'counts'), where('storeId', '==', storeId), where('productId', '==', productId));
   const snapshot = await getDocs(q);
   
   const entries = snapshot.docs.map(docSnap => ({

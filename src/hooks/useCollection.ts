@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
-import { collection, onSnapshot } from 'firebase/firestore';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { firestore, authReady } from '../firebase/config';
+import { useStore } from '../contexts/StoreContext';
 
 export function useCollection<T extends { id: string }>(collectionName: string): T[] | undefined {
   const [data, setData] = useState<T[] | undefined>(undefined);
+  const { activeStore } = useStore();
 
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
@@ -11,8 +13,12 @@ export function useCollection<T extends { id: string }>(collectionName: string):
 
     authReady.then(() => {
       if (cancelled) return;
-      unsubscribe = onSnapshot(
+      const q = query(
         collection(firestore, collectionName),
+        where('storeId', '==', activeStore)
+      );
+      unsubscribe = onSnapshot(
+        q,
         (snapshot) => {
           const items = snapshot.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }) as T);
           setData(items);
@@ -25,7 +31,7 @@ export function useCollection<T extends { id: string }>(collectionName: string):
       cancelled = true;
       unsubscribe?.();
     };
-  }, [collectionName]);
+  }, [collectionName, activeStore]);
 
   return data;
 }

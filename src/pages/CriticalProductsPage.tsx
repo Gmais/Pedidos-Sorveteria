@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useCollection } from '../hooks/useCollection';
 import { getLatestCounts } from '../firebase/api';
+import { useStore } from '../contexts/StoreContext';
 import { ProductPhoto } from '../components/ProductPhoto';
 import type { Category, Product } from '../db/types';
 
@@ -23,19 +24,20 @@ function percentageColor(pct: number) {
 }
 
 export function CriticalProductsPage() {
+  const { activeStore } = useStore();
   const products = useCollection<Product>('products');
   const categories = useCollection<Category>('categories');
   const [latestCounts, setLatestCounts] = useState<Map<string, { quantity: number; countedAt: number }>>(new Map());
 
   useEffect(() => {
     let cancelled = false;
-    getLatestCounts().then((m) => {
+    getLatestCounts(activeStore).then((m) => {
       if (!cancelled) setLatestCounts(m);
     });
     return () => {
       cancelled = true;
     };
-  }, [products]);
+  }, [activeStore]);
 
   const categoryById = useMemo(() => {
     const map = new Map<string, string>();

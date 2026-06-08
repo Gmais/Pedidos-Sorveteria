@@ -3,12 +3,14 @@ import { deleteField } from 'firebase/firestore';
 import { useCollection } from '../hooks/useCollection';
 import { addProduct, createCategory, deleteProduct, updateProduct } from '../firebase/api';
 import { uploadProductPhoto } from '../cloudinary/api';
+import { useStore } from '../contexts/StoreContext';
 import type { Category, Product } from '../db/types';
 import { ProductPhoto } from '../components/ProductPhoto';
 import { Modal } from '../components/Modal';
 import { ProductForm, type ProductFormResult } from '../components/ProductForm';
 
 export function ProductsPage() {
+  const { activeStore } = useStore();
   const products = useCollection<Product>('products');
   const categories = useCollection<Category>('categories');
 
@@ -75,6 +77,7 @@ export function ProductsPage() {
         idealQuantity: data.idealQuantity,
         unit: data.unit,
         active: data.active,
+        storeId: activeStore,
       };
 
       if (editing) {
@@ -201,7 +204,7 @@ export function ProductsPage() {
           initial={editing}
           onCancel={() => setModalOpen(false)}
           onSubmit={handleSubmit}
-          onCreateCategory={createCategory}
+          onCreateCategory={(name) => createCategory(name, activeStore)}
         />
       </Modal>
 
