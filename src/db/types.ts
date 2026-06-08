@@ -15,6 +15,7 @@ export interface Product {
   active: boolean;
   photoUrl?: string;
   storeId: StoreId;
+  favorite?: boolean;
 }
 
 export interface CountEntry {

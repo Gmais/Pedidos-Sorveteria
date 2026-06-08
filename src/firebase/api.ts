@@ -101,6 +101,11 @@ export async function getLatestCountTimestamp(storeId: StoreId): Promise<number 
   return (snapshot.docs[0].data() as Omit<CountEntry, 'id'>).countedAt;
 }
 
+export async function toggleProductFavorite(productId: string, favorite: boolean): Promise<void> {
+  await authReady;
+  await updateDoc(doc(firestore, 'products', productId), { favorite });
+}
+
 // ---- Orders ----
 
 export async function getOrCreateTodayOrder(storeId: StoreId): Promise<string> {
