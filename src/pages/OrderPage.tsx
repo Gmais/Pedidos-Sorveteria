@@ -201,8 +201,10 @@ export function OrderPage() {
           return (
             <div
               key={item.product.id}
-              className={`bg-white dark:bg-slate-800 rounded-xl border p-3 flex items-center gap-3 ${
-                ordered ? 'border-emerald-300 dark:border-emerald-700 opacity-70' : 'border-slate-200 dark:border-slate-700'
+              className={`rounded-xl border p-3 flex items-center gap-3 transition-colors ${
+                ordered 
+                  ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-300 dark:border-emerald-700 opacity-80' 
+                  : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'
               }`}
             >
               <ProductPhoto photoUrl={item.product.photoUrl} name={item.product.name} className="w-16 h-16 rounded-lg shrink-0" />
