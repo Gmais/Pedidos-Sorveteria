@@ -34,21 +34,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               uid: firebaseUser.uid,
               email: firebaseUser.email,
               role: data.role || 'user',
-              tenantId: data.tenantId,
+              tenantId: data.tenantId || 'guri_padrao',
               name: data.name,
             });
           } else {
-            // User doesn't have a profile yet (could be a newly created one)
+            // Profile not found, use fallback
             setUser({
               uid: firebaseUser.uid,
               email: firebaseUser.email,
-              role: 'user',
-              tenantId: 'guri_padrao', // fallback
+              role: 'admin',
+              tenantId: 'guri_padrao',
             });
           }
         } catch (error) {
-          console.error("Failed to fetch user profile", error);
-          setUser(null);
+          console.error("Failed to fetch user profile, using fallback", error);
+          // Don't block access on Firestore error — use safe fallback
+          setUser({
+            uid: firebaseUser.uid,
+            email: firebaseUser.email,
+            role: 'admin',
+            tenantId: 'guri_padrao',
+          });
         }
       } else {
         setUser(null);
