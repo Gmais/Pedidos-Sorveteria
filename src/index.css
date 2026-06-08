@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+@theme {
+  --color-guri-blue: #1a7efb;
+  --color-guri-blue-hover: #1562c5;
+  --color-guri-yellow: #FFD103;
+  --color-guri-yellow-hover: #e6bc00;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {

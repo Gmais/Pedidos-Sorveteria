@@ -155,7 +155,7 @@ export function ProductsPage() {
         <h2 className="text-xl font-bold">Produtos</h2>
         <button
           onClick={openAdd}
-          className="px-4 py-2.5 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 flex items-center gap-2"
+          className="px-4 py-2.5 rounded-lg bg-guri-blue text-white font-medium hover:bg-guri-blue-hover transition-colors flex items-center gap-2 shadow-sm"
         >
           <span className="text-lg leading-none">+</span> Adicionar
         </button>
@@ -210,7 +210,7 @@ export function ProductsPage() {
                 <div
                   key={p.id}
                   onClick={() => openEdit(p)}
-                  className="text-left bg-white dark:bg-slate-800 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow cursor-pointer flex flex-col h-full relative"
+                  className="text-left bg-white dark:bg-slate-800 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 cursor-pointer flex flex-col h-full relative"
                 >
                   <div className="relative">
                     <ProductPhoto photoUrl={p.photoUrl} name={p.name} className="w-full aspect-square" />
@@ -221,8 +221,8 @@ export function ProductsPage() {
                     )}
                     <button
                       onClick={(e) => handleToggleFavorite(e, p)}
-                      className={`absolute top-2 right-2 p-1.5 rounded-full bg-slate-800/50 hover:bg-slate-800/80 transition-colors ${
-                        p.favorite ? 'text-yellow-400' : 'text-slate-300'
+                      className={`absolute top-2 right-2 p-1.5 rounded-full bg-slate-900/60 hover:bg-slate-900/80 backdrop-blur-sm transition-colors ${
+                        p.favorite ? 'text-guri-yellow' : 'text-white/70 hover:text-white'
                       }`}
                       title={p.favorite ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
                     >

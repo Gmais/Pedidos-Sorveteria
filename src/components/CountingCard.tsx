@@ -30,7 +30,7 @@ export function CountingCard({ product, quantity, onChange }: CountingCardProps)
   }
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col">
+    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
       <button
         onClick={handlePhotoTap}
         className="block w-full active:opacity-80 transition-opacity"
@@ -57,7 +57,7 @@ export function CountingCard({ product, quantity, onChange }: CountingCardProps)
             value={quantity ?? ''}
             onChange={handleManualChange}
             placeholder="—"
-            className="w-full text-center text-lg font-semibold rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full text-center text-lg font-semibold rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 py-2 focus:outline-none focus:ring-2 focus:ring-guri-blue"
           />
         </div>
       </div>

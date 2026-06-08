@@ -201,7 +201,7 @@ export function OrderPage() {
           return (
             <div
               key={item.product.id}
-              className={`rounded-xl border p-3 flex items-center gap-3 transition-colors ${
+              className={`rounded-2xl border p-3 flex items-center gap-3 transition-colors hover:shadow-sm ${
                 ordered 
                   ? 'bg-emerald-100 dark:bg-emerald-800/50 border-emerald-400 dark:border-emerald-500' 
                   : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'
@@ -214,7 +214,7 @@ export function OrderPage() {
                 <div className="mt-1 flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-slate-600 dark:text-slate-300">
                   <span>Ideal: {item.product.idealQuantity} {item.product.unit}</span>
                   <span>Atual: {item.countedQuantity} {item.product.unit}</span>
-                  <span className="font-semibold text-blue-600 dark:text-blue-400">
+                  <span className="font-semibold text-guri-blue">
                     Pedir: {item.quantityToOrder} {item.product.unit}
                   </span>
                 </div>
@@ -223,10 +223,10 @@ export function OrderPage() {
                 <button
                   onClick={() => toggleOrdered(item)}
                   disabled={toggling === item.product.id}
-                  className={`px-3 py-2 rounded-lg text-xs font-medium disabled:opacity-60 ${
+                  className={`px-3 py-2 rounded-lg text-xs font-medium disabled:opacity-60 transition-colors ${
                     ordered
-                      ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300'
-                      : 'bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600'
+                      ? 'bg-emerald-200 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300'
+                      : 'bg-slate-100 dark:bg-slate-700 hover:bg-guri-blue hover:text-white dark:hover:bg-guri-blue dark:hover:text-white'
                   }`}
                 >
                   {ordered ? '✓ Pedido feito' : 'Marcar como pedido'}
