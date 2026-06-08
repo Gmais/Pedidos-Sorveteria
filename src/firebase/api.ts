@@ -127,26 +127,23 @@ export async function setOrderItemStatus(id: string, status: OrderItemStatus): P
   await updateDoc(doc(firestore, 'orderItems', id), { status });
 }
 
-export async function deleteTodayOrderAndCounts(): Promise<void> {
+export async function deleteCountForProduct(productId: string): Promise<void> {
   await authReady;
   const now = Date.now();
+  const q = query(collection(firestore, 'counts'), where('productId', '==', productId));
+  const snapshot = await getDocs(q);
+  
+  const entries = snapshot.docs.map(docSnap => ({
+    ref: docSnap.ref,
+    countedAt: (docSnap.data() as CountEntry).countedAt,
+  }));
+  
+  const latest = entries.reduce<{ ref: DocumentReference; countedAt: number } | null>(
+    (acc, entry) => (!acc || entry.countedAt > acc.countedAt ? entry : acc),
+    null
+  );
 
-  const countsSnap = await getDocs(collection(firestore, 'counts'));
-  const countsToDelete = countsSnap.docs.filter((docSnap) => isSameDay((docSnap.data() as Omit<CountEntry, 'id'>).countedAt, now));
-  for (const docSnap of countsToDelete) {
-    await deleteDoc(docSnap.ref);
-  }
-
-  const ordersSnap = await getDocs(query(collection(firestore, 'orders'), orderBy('createdAt', 'desc'), limit(1)));
-  if (!ordersSnap.empty) {
-    const orderDoc = ordersSnap.docs[0];
-    if (isSameDay((orderDoc.data() as Omit<Order, 'id'>).createdAt, now)) {
-      const orderId = orderDoc.id;
-      const itemsSnap = await getDocs(query(collection(firestore, 'orderItems'), where('orderId', '==', orderId)));
-      for (const item of itemsSnap.docs) {
-        await deleteDoc(item.ref);
-      }
-      await deleteDoc(orderDoc.ref);
-    }
+  if (latest && isSameDay(latest.countedAt, now)) {
+    await deleteDoc(latest.ref);
   }
 }

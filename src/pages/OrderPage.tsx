@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useCollection } from '../hooks/useCollection';
-import { addOrderItem, getLatestCounts, getOrCreateTodayOrder, setOrderItemStatus, deleteTodayOrderAndCounts } from '../firebase/api';
+import { addOrderItem, getLatestCounts, getOrCreateTodayOrder, setOrderItemStatus, deleteCountForProduct } from '../firebase/api';
 import { ProductPhoto } from '../components/ProductPhoto';
 import { exportOrderToPdf, exportOrderToExcel, shareOnWhatsApp } from '../utils/exportOrder';
 import type { Category, OrderItem, Product } from '../db/types';
@@ -124,19 +124,19 @@ export function OrderPage() {
     shareOnWhatsApp(itemsToExport);
   }
 
-  async function handleDeleteOrder() {
-    if (!window.confirm('Tem certeza que deseja apagar o pedido e ZERAR todas as contagens feitas hoje? Esta ação não pode ser desfeita e a lista ficará vazia.')) {
+  async function handleExcludeItem(item: PendingItem) {
+    if (!window.confirm(`Tem certeza que deseja remover ${item.product.name} do pedido? A contagem feita hoje será apagada.`)) {
       return;
     }
     setDeleting(true);
     try {
-      await deleteTodayOrderAndCounts();
-      setLatestCounts(new Map());
-      const m = await getLatestCounts();
-      setLatestCounts(m);
+      await deleteCountForProduct(item.product.id);
+      const newCounts = new Map(latestCounts);
+      newCounts.delete(item.product.id);
+      setLatestCounts(newCounts);
     } catch (err) {
       console.error(err);
-      alert('Erro ao excluir pedido');
+      alert('Erro ao excluir item do pedido');
     } finally {
       setDeleting(false);
     }
@@ -173,13 +173,6 @@ export function OrderPage() {
           >
             💬 Compartilhar no WhatsApp
           </button>
-          <button
-            onClick={handleDeleteOrder}
-            disabled={deleting}
-            className="px-4 py-2.5 rounded-lg bg-slate-200 dark:bg-slate-700 text-red-600 dark:text-red-400 text-sm font-medium hover:bg-red-50 dark:hover:bg-red-900/30 disabled:opacity-60 flex items-center gap-2 ml-auto"
-          >
-            🗑️ {deleting ? 'Excluindo...' : 'Excluir pedido'}
-          </button>
         </div>
       )}
 
@@ -212,17 +205,26 @@ export function OrderPage() {
                   </span>
                 </div>
               </div>
-              <button
-                onClick={() => toggleOrdered(item)}
-                disabled={toggling === item.product.id}
-                className={`shrink-0 px-3 py-2 rounded-lg text-xs font-medium disabled:opacity-60 ${
-                  ordered
-                    ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300'
-                    : 'bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600'
-                }`}
-              >
-                {ordered ? '✓ Pedido feito' : 'Marcar como pedido'}
-              </button>
+              <div className="flex flex-col gap-2 shrink-0">
+                <button
+                  onClick={() => toggleOrdered(item)}
+                  disabled={toggling === item.product.id}
+                  className={`px-3 py-2 rounded-lg text-xs font-medium disabled:opacity-60 ${
+                    ordered
+                      ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300'
+                      : 'bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600'
+                  }`}
+                >
+                  {ordered ? '✓ Pedido feito' : 'Marcar como pedido'}
+                </button>
+                <button
+                  onClick={() => handleExcludeItem(item)}
+                  disabled={deleting}
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/40 disabled:opacity-60 flex items-center justify-center gap-1"
+                >
+                  🗑️ Excluir
+                </button>
+              </div>
             </div>
           );
         })}
