@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import { useStore } from '../contexts/StoreContext';
 import type { StoreId } from '../db/types';
@@ -20,6 +20,12 @@ const STORE_OPTIONS: { id: StoreId; label: string }[] = [
 export function Layout() {
   const { theme, toggleTheme } = useTheme();
   const { activeStore, setActiveStore } = useStore();
+  const navigate = useNavigate();
+
+  const handleStoreSwitch = (id: StoreId) => {
+    setActiveStore(id);
+    navigate('/');
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans">
@@ -34,7 +40,7 @@ export function Layout() {
             {STORE_OPTIONS.map((option) => (
               <button
                 key={option.id}
-                onClick={() => setActiveStore(option.id)}
+                onClick={() => handleStoreSwitch(option.id)}
                 className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
                   activeStore === option.id
                     ? 'bg-white text-guri-blue shadow-sm'

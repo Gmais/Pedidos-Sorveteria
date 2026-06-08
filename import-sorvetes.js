@@ -1,0 +1,320 @@
+import { initializeApp } from 'firebase/app';
+import { getFirestore, collection, getDocs, deleteDoc, doc, addDoc, query, where } from 'firebase/firestore';
+import { getAuth, signInAnonymously } from 'firebase/auth';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyATEZW_ALNBv92F-A9hbFwnFWpJDR69V9g",
+  authDomain: "pedidos-sorveteria-1e33d.firebaseapp.com",
+  projectId: "pedidos-sorveteria-1e33d",
+  messagingSenderId: "306306991395",
+  appId: "1:306306991395:web:0e9b53d0ba03e76970f896",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+const STORE_ID = 'sorvetes';
+
+const rawData = `1. PICOLE FRUTA E LEITE
+PIC. FRUTA ACAI 50G CX/28
+PIC. FRUTA AGUA DE COCO 50G CX/28
+PIC. FRUTA MARACUJA 50G CX/28
+PIC. FRUTA MELANCIA 50G CX/28
+PIC. FRUTA MORANGO C/28
+PIC. LEITE CAFE C/ CHOCOLATE C/28
+PIC. LEITE MACA VERDE C/28
+PIC. LEITE TORTA DE LIMAO 50 G CX/28
+PIC.LEITE MANGA 50G CX/28
+PIC. FRUTA ABACAXI C/28
+PIC. FRUTA ABACAXI C/ HORTELA C/28
+PIC. FRUTA GROSELHA C/28
+PIC. FRUTA LIMAO C/28
+PIC. FRUTA TANGERINA C/28
+PIC. FRUTA UVA C/28
+PIC. LEITE COCO BRANCO C/28
+PIC. LEITE COCO QUEIMADO C/28
+PIC. LEITE CHOCOLATE C/28
+PIC. LEITE L. CONDENSADO C/28
+PIC. LEITE MAMAO C/28
+PIC. LEITE MARACUJA C/28
+PIC. LEITE MELAO CHINES C/28
+PIC. LEITE MILHO VERDE C/28
+PIC. LEITE MORANGO C/28
+PIC. PACOCA CREMOSA C/28
+PIC. UVA AO CREME C/28
+PIC. LEITE LEITINHO C/28
+
+2. GURI GURT
+GURI GURT CHICLETE PC/40
+GURI GURT LEITE CONDENSADO PC/40
+GURI GURT MARACUJA PC/40
+GURI GURT MORANGO PC/40
+GURI GURT UVA PC/40
+
+3. PICOLE BONELLO
+PIC. BONELLO CHOCOMENTA C/18
+PIC. BONELLO CREME DE AVELA C/18
+PIC. BONELLO IOGURTE GREGO FR BOSQ. C/18
+PIC. BONELLO PISTACHE C/18
+PIC. COOKIE CROC C/ 18
+PIC. BROWNIE C/18
+
+4. PICOLE ESPECIAL
+PIC. DOCE DE LEITE C/22
+PIC. ALFAJOR C/24
+PIC. BRIGADEIRO C/22
+PIC. FLOCOS C/22
+PIC. SKIMO C/22
+PIC. TABLETE C/ 24
+PIC. GURI FRUT MORANGO C/28
+PIC. PINTA LINGUA C/28
+PIC. UNICORNIO C/22
+
+5. PICOLE SUPREMO
+PIC. SUPREMO BIANCO C/ 18
+PIC. SUPREMO NERO C/18
+PIC. PE DE MOLEQUE C/18
+PIC. SUPREMO MORANGUINHO C/20
+
+6. COPOS
+COPO 90 ML BOCA LOCA C/30
+COPO SUNDAE BAUNILHA TRUFADO C/ 10
+COPO 80G SORV. UVA AO CREME CX C/8
+PT 1L SORV. UVA AO CREME PACK C/2
+PT 400ML GURI + CHANTY MORANGO PACK C/06
+PT 400ML GURI + LEITE TRUFADO PACK C/06
+
+7. CONES / LA MORENA
+CONE CROCANTE C/18
+CONE CONFETE C/18
+CONE TORTA ALEMA C/18
+CASQUINHA LAMORENA C/10
+
+8. MINI BOM BOM
+MINI ACAI 105G CX C/12
+MINI BOM BOM COCO C/12
+
+9. POTE 1.5 L PREMIUM
+PT 1.5 L ALFAJOR PACK C/02
+PT 1.5 L CHOCO DREAM PACK C/02
+PT 1.5 L CLASSICO BOMBOM PACK C/02
+PT 1.5 L IOGURTE GREGO C/ FRUTAS PACK C/02
+PT 1.5 L MARULA C/ BRIG. ARTESANAL PACK C/02
+
+10. POTE 1.5 L GURI +
+PT 1.5 L GURI + CHANTY MORANGO PACK C/04
+PT 1.5 L GURI + IOGURTE C/ AMORA PACK C/04
+PT 1.5 L GURI + LEITE TRUFADO PACK C/04
+
+11. POTE 2 L ESPECIAL
+PT 2 L SORV. CHOCOMENTA PACK C/02
+PT 2 L SORV. COOKIE CROC PACK C/02
+PT 2 L SORV. FLORESTA NEGRA PACK C/02
+PT 2 L SORV. MON LATE PACK C/02
+PT 2 L SORV. OLHO DE SOGRA PACK C/02
+PT 2 L SORV. PAVE LATINO PACK C/02
+PT 2 L SORV. ROMEU E JULIETA PACK C/02
+PT 2 L SORV. TORTA ALEMA PACK C/02
+PT 2 L SORV. TORTA LIMAO PACK C/02
+
+12. POTE 2 L CASEIRO
+PT 2 L SORV. MOUSSE MARACUJA TRUFADO PACK C/02
+PT 2 L SORV. COCADA CREMOSA PACK C/02
+PT 2 L SORV. PACOCA CREMOSA PACK C/02
+
+13. POTE 2 L DOIS AMORES
+PT 2 L SORV. ABACAXI E COCO PACK C/02
+PT 2 L SORV. BRIG. E MORANGO PACK C/02
+
+14. POTE 2 L LEVE P CASA
+PT 2 L SORV. ABACAXI PACK C/02
+PT 2 L SORV. BRIGADEIRO PACK C/02
+PT 2 L SORV. CHOC. BRANCO PACK C/02
+PT 2 L SORV. CREME PACK C/02
+PT 2 L SORV. FLOCOS PACK C/02
+PT 2 L SORV. NAPOLITANO PACK C/02
+PT 2 L SORV. PASSAS AO RUM PACK C/02
+
+15. POTE 1.5 L GELA KUKA
+PT 1.5 L SORV. BRIG. E L. CONDENSADO GELAKUKA PACK C/02
+PT 1.5 L SORV. CREME GELAKUKA PACK C/02
+PT 1.5 L SORV. NAPOLITANO GELAKUKA PACK C/02
+
+16. LINHA ACAI
+COPO 160 G ACAI ZERO ACUCAR CX C/06
+PIC. ACAI C/LEITINHO 50G C/28
+COPO 120 G ACAI COM GUARANA CX C/08
+COPO 120 G ACAI COM LEITINHO CX C/08
+COPO 120 G ACAI COM PACOCA CX C/08
+PT 1,05 KG ACAI COM GUARANA PACK C/02
+PT 1.05 KG ACAI COM LEITINHO PACK C/02
+CX 7 L ACAI TRADICIONAL
+CX 7 L ACAI COM LEITINHO
+CX 7 L ACAI COM AVELÃ
+
+17. LINHA ZERO
+PIC. ZERO ACUCAR BAUNILHA C/22
+PIC. ZERO ACUCAR CHOCOLATE C/22
+COPO 500 ML ZERO LACTOSE CHOCOLATE C/04
+COPO 500 ML ZERO LACTOSE MORANGO C/04
+
+18. BALDE 3.2 LITROS
+BALDONE 3.2 L SORV. CHOCOLITANO
+BALDONE 3.2 L SORV. FLOCOS
+BALDONE 3.2 L SORV. NAPOLITANO
+
+19. CAIXA SORVETE
+CX 7 L ACAI ZERO ACUCAR
+CX 7 L SORV. CHOCOLATE BELGA
+CX 7 L SORV. CHURROS C DOCE DE LEITE
+CX 7 L SORV. COCO C/ ABOBORA
+CX 7 L SORV. FUBA COM GOIABADA
+CX 7 L SORV. MANGA COM ABACAXI E HORTELA
+CX 7 L SORV. MANGA COM MARACUJA
+CX 7 L SORV. MOUSSE DE MARACUJA TRUFADO
+CX 7 L ACAI COM AVELÃ
+CX 7 L ACAI COM LEITINHO
+CX 7 L ACAI TRADICIONAL
+CX 7 L GELATTO PISTACHIO
+CX 7 L SORV. ABACAXI
+CX 7 L SORV. BANANA CARAMELIZADA
+CX 7 L SORV. BLUE-ICE
+CX 7 L SORV. BRIGADEIRO
+CX 7 L SORV. CAFE C BRIGADEIRO
+CX 7 L SORV. CHICLETES
+CX 7 L SORV. CHOC. BRANCO
+CX 7 L SORV. CHOCOLATE
+CX 7 L SORV. CHOCOMENTA
+CX 7 L SORV. CLASSICO BOM BOM
+CX 7 L SORV. COCADA CREMOSA
+CX 7 L SORV. COCO BRANCO
+CX 7 L SORV. COOKIE CROC
+CX 7 L SORV. CREME
+CX 7 L SORV. CREME DE CUPUAÇU
+CX 7 L SORV. DOCE LEITE
+CX 7 L SORV. FLOCOS
+CX 7 L SORV. FLORESTA NEGRA
+CX 7 L SORV. IOGURTE GREGO C/ F BOSQUE
+CX 7 L SORV. LEITE CONDENSADO
+CX 7 L SORV. MARACUJA
+CX 7 L SORV. MARULA C/ BRIGADEIRO ARTESANAL
+CX 7 L SORV. MILHO VERDE
+CX 7 L SORV. MON LATE
+CX 7 L SORV. MORANGO
+CX 7 L SORV. NATA
+CX 7 L SORV. OLHO DE SOGRA
+CX 7 L SORV. PACOCA CREMOSA
+CX 7 L SORV. PASSAS AO RUM
+CX 7 L SORV. PAVE LATINO
+CX 7 L SORV. PISTACHE
+CX 7 L SORV. PREMIUM ALFAJOR
+CX 7 L SORV. PREMIUM CHOCODREAM
+CX 7 L SORV. ROMEU E JULIETA
+CX 7 L SORV. TORTA ALEMA
+CX 7 L SORV. TORTA LIMAO
+CX 7 L SORV. UVA
+CX 7 L SORV. UVA AO CREME
+CX 7 L SORV. ZERO ACUCAR BAUNILHA
+CX 7 L SORV. ZERO ACUCAR CHOCOLATE
+
+20. POLPA DE FRUTA
+POLPA DE FRUTA GURI ABACAXI COM HORTELA PC C/10
+POLPA DE FRUTA GURI ABACAXI PC C/10
+POLPA DE FRUTA GURI ACEROLA E LARANJA PC C/10
+POLPA DE FRUTA GURI ACEROLA PC C/10
+POLPA DE FRUTA GURI MARACUJA PC C/10
+POLPA DE FRUTA GURI MORANGO PC C/10
+
+21. PETIT GATEAU / CHURROS
+BROWNIE GURI 60G BANDEJA C/10
+MINI CHURROS CX C/100
+PETIT GATEAU CHOCOLATE 240G CX C/6 BANDEJAS
+PETIT GATEAU DOCE DE LEITE 240G CX C/6 BANDEJAS
+
+22. SALGADOS
+ASSADO DE CALABRESA COM QUEIJO CHEDDAR PCT C/05
+BAURU DE FRANGO PCT C/05
+BAURU DE PRESUNTO E QUEIJO PCT C/05
+CALZONE DE FRANGO PCT C/05
+CALZONE DE PALMITO PCT C/05
+DOGUINHO PCT C/05
+HAMBURGUER PCT C/05`;
+
+async function run() {
+  try {
+    await signInAnonymously(auth);
+
+    // 1. Apagar categorias e produtos atuais de "sorvetes"
+    const catQuery = query(collection(db, 'categories'), where('storeId', '==', STORE_ID));
+    const catSnap = await getDocs(catQuery);
+    console.log(`Encontradas ${catSnap.docs.length} categorias em ${STORE_ID}. Apagando...`);
+    for (const d of catSnap.docs) {
+      await deleteDoc(d.ref);
+    }
+
+    const prodQuery = query(collection(db, 'products'), where('storeId', '==', STORE_ID));
+    const prodSnap = await getDocs(prodQuery);
+    console.log(`Encontrados ${prodSnap.docs.length} produtos em ${STORE_ID}. Apagando...`);
+    for (const d of prodSnap.docs) {
+      await deleteDoc(d.ref);
+    }
+
+    // Parse do raw data
+    const lines = rawData.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    let currentCategory = null;
+    const items = [];
+
+    for (const line of lines) {
+      const match = line.match(/^\d+\.\s+(.+)$/);
+      if (match) {
+        currentCategory = match[1];
+        items.push({ type: 'category', name: currentCategory });
+      } else if (currentCategory) {
+        items.push({ type: 'product', name: line, categoryName: currentCategory });
+      }
+    }
+
+    // Agrupar por categoria para manter a ordem
+    const categoriesMap = new Map();
+    for (const item of items) {
+      if (item.type === 'category') {
+        if (!categoriesMap.has(item.name)) {
+          categoriesMap.set(item.name, []);
+        }
+      } else if (item.type === 'product') {
+        categoriesMap.get(item.categoryName).push(item.name);
+      }
+    }
+
+    // 2. Inserir no Firebase
+    for (const [catName, products] of categoriesMap.entries()) {
+      console.log(`Criando categoria: ${catName}`);
+      const catRef = await addDoc(collection(db, 'categories'), {
+        name: catName,
+        storeId: STORE_ID
+      });
+      const categoryId = catRef.id;
+
+      for (const prodName of products) {
+        console.log(`  - Criando produto: ${prodName}`);
+        await addDoc(collection(db, 'products'), {
+          categoryId,
+          name: prodName,
+          idealQuantity: 10,
+          unit: 'un',
+          storeId: STORE_ID
+        });
+      }
+    }
+
+    console.log('Importação finalizada com sucesso!');
+    process.exit(0);
+
+  } catch (err) {
+    console.error('Erro na importação:', err);
+    process.exit(1);
+  }
+}
+
+run();
