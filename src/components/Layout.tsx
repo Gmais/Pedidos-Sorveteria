@@ -17,7 +17,7 @@ export function Layout() {
       <header className="sticky top-0 z-20 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-sm">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <h1 className="text-lg sm:text-xl font-bold flex items-center gap-2">
-            🍦 Estoque Sorveteria
+            🍦 Controle de estoque
           </h1>
           <button
             onClick={toggleTheme}
