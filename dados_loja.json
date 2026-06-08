@@ -1,0 +1,1103 @@
+{
+  "metadata": {
+    "nome_loja": "Loja Guri - Turvo",
+    "tipo": "Distribuidora",
+    "data_coleta": "2026-06-07",
+    "total_categorias": 17,
+    "total_produtos": 273,
+    "url_origem": "https://supplyguri.hub4stores.com/produtos"
+  },
+  "categorias": [
+    {
+      "id": 1,
+      "nome": "Produtos em Pó",
+      "total_produtos": 1,
+      "produtos": [
+        {
+          "id": 1,
+          "nome": "Leite Po Piracanjuba Sache 400g"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "nome": "Água",
+      "total_produtos": 2,
+      "produtos": [
+        {
+          "id": 1,
+          "nome": "Agua Mineral Guri 510 Ml S/ Gas Fd C/12"
+        },
+        {
+          "id": 2,
+          "nome": "Agua Mineral Guri 510 Ml C/ Gas Fd C/12"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "nome": "Casquinhas",
+      "total_produtos": 5,
+      "produtos": [
+        {
+          "id": 1,
+          "nome": "Biju Decor 300gr Marvi"
+        },
+        {
+          "id": 2,
+          "nome": "Canudo Biju Bauníaha Marvi 1,0kg"
+        },
+        {
+          "id": 3,
+          "nome": "Cascao (Kid Cascao Marvi) Cx C/ 1,98kg"
+        },
+        {
+          "id": 4,
+          "nome": "Casquinha B. Doce Baunilha 2,52 Kg"
+        },
+        {
+          "id": 5,
+          "nome": "Cestinha Marvi Cx (2,40 Kg) (120 Un)"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "nome": "Fini",
+      "total_produtos": 37,
+      "produtos": [
+        {
+          "id": 1,
+          "nome": "Cobertura Fini Bananas 190gr"
+        },
+        {
+          "id": 2,
+          "nome": "Cobertura Fini Beijos 190gr"
+        },
+        {
+          "id": 3,
+          "nome": "Cobertura Fini Dentadura 190gr"
+        },
+        {
+          "id": 4,
+          "nome": "Fini Bananas 15gr"
+        },
+        {
+          "id": 5,
+          "nome": "Fini Beijos De Morango 15gr"
+        },
+        {
+          "id": 6,
+          "nome": "Fini Dentadura 15gr"
+        },
+        {
+          "id": 7,
+          "nome": "Tubes Fini Tutti Frutti 15g C/12"
+        },
+        {
+          "id": 8,
+          "nome": "Cobertura Fini Banana 1kg"
+        },
+        {
+          "id": 9,
+          "nome": "Cobertura Fini Dentadura 1kg"
+        },
+        {
+          "id": 10,
+          "nome": "Fini Tubes Twister 35g Cx C/10"
+        },
+        {
+          "id": 11,
+          "nome": "Fini Goma Banana 500gr"
+        },
+        {
+          "id": 12,
+          "nome": "Fini Goma Beijos De Morango 500gr"
+        },
+        {
+          "id": 13,
+          "nome": "Fini Goma Dentaduras 500gr"
+        },
+        {
+          "id": 14,
+          "nome": "Fini Minhocas Brilho 500gr"
+        },
+        {
+          "id": 15,
+          "nome": "Fini Minhocas Citrica 500gr"
+        },
+        {
+          "id": 16,
+          "nome": "Fini Goma Amoras 500gr"
+        },
+        {
+          "id": 17,
+          "nome": "Fini Marshmallow Recheado Torcao Azul 250gr"
+        },
+        {
+          "id": 18,
+          "nome": "Fini Marshmallow Recheado Torcao Rosa 250gr"
+        },
+        {
+          "id": 19,
+          "nome": "Fini Marshmallow Camping 250gr"
+        },
+        {
+          "id": 20,
+          "nome": "Fini Super Gigante Framboesa Citrico 27g Cx C/24"
+        },
+        {
+          "id": 21,
+          "nome": "Fini Super Gigante Morango Citrico 27g Cx C/24"
+        },
+        {
+          "id": 22,
+          "nome": "Marshmalow Vulcao Rosa 200g"
+        },
+        {
+          "id": 23,
+          "nome": "Fini Super Gigante Twister 27g Cx C/24"
+        },
+        {
+          "id": 24,
+          "nome": "Fini Tubes Morango 15g C/12"
+        },
+        {
+          "id": 25,
+          "nome": "Fini Tubes Morango C/laranja Citrico 15g C/12"
+        },
+        {
+          "id": 26,
+          "nome": "Fini Tubes Morango Citrico 15g C/12"
+        },
+        {
+          "id": 27,
+          "nome": "Fini Tubes Pinta Lingua 15g C/12"
+        },
+        {
+          "id": 28,
+          "nome": "Fini Tubes Tres Cores 15g C/12"
+        },
+        {
+          "id": 29,
+          "nome": "Fini Tubes Twister 15g C/12"
+        },
+        {
+          "id": 30,
+          "nome": "Fini Tubes Uva 15g C/12"
+        },
+        {
+          "id": 31,
+          "nome": "Tubes Fini Uva Citrico 15g C/12"
+        },
+        {
+          "id": 32,
+          "nome": "Fini Chicle Salada De Frutas 14gr Cx C/18"
+        },
+        {
+          "id": 33,
+          "nome": "Fini Chicle Classicos 14gr Cx C/18"
+        },
+        {
+          "id": 34,
+          "nome": "Fini Chicle Morango 14gr Cx C/18"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "nome": "Acessórios",
+      "total_produtos": 38,
+      "produtos": [
+        {
+          "id": 1,
+          "nome": "Adesivo Sabores Para Cubas"
+        },
+        {
+          "id": 2,
+          "nome": "Adesivo Sabores Para Buffet"
+        },
+        {
+          "id": 3,
+          "nome": "Balanca Eletronica Para Loja"
+        },
+        {
+          "id": 4,
+          "nome": "Cardapio Pvc"
+        },
+        {
+          "id": 5,
+          "nome": "Cesta Azul Guri"
+        },
+        {
+          "id": 6,
+          "nome": "Desmoldante Spray Destak 600ml"
+        },
+        {
+          "id": 7,
+          "nome": "Guarda Sol Sombrabella 1,60m Guri"
+        },
+        {
+          "id": 8,
+          "nome": "Pegador Pequeno Transparente"
+        },
+        {
+          "id": 9,
+          "nome": "Taça Margarita 300ml"
+        },
+        {
+          "id": 10,
+          "nome": "Tenda Inflável Tradicional - 3 X 3 Metros"
+        },
+        {
+          "id": 11,
+          "nome": "Boleador Aluminio Bola Pequena Cabo Curto"
+        },
+        {
+          "id": 12,
+          "nome": "Boleador Bola Grande Cabo Longo"
+        },
+        {
+          "id": 13,
+          "nome": "Boleador Bola Grande Curto Em Aluminio"
+        },
+        {
+          "id": 14,
+          "nome": "Espatula Quadrada Para Sorvete Cabo Longo"
+        },
+        {
+          "id": 15,
+          "nome": "Cesto Para Refrigeração 558x400"
+        },
+        {
+          "id": 16,
+          "nome": "Taca Milk Shake Policarbonato 360ml"
+        },
+        {
+          "id": 17,
+          "nome": "Avental Frontal Goumert Oxford Azul Marinho"
+        },
+        {
+          "id": 18,
+          "nome": "Balao Personalizado Guri N.9 Pct C/50un"
+        },
+        {
+          "id": 19,
+          "nome": "Balde De Plastico Br. Colocar Concha C/ Suporte P/freezer"
+        },
+        {
+          "id": 20,
+          "nome": "Bisnaga Para Calda Bico Dosador 500ml"
+        },
+        {
+          "id": 21,
+          "nome": "Bisnaga Para Calda Bico Normal 500ml"
+        },
+        {
+          "id": 22,
+          "nome": "Camiseta Trad. Mc Gourmet Malha Azul"
+        },
+        {
+          "id": 23,
+          "nome": "Canudo Longo Colorido Sache 5mm C/100"
+        },
+        {
+          "id": 24,
+          "nome": "Canudo Super Shake Sache 10mm C/100"
+        },
+        {
+          "id": 25,
+          "nome": "Comanda Pvc Personalizada 10x15cm"
+        },
+        {
+          "id": 26,
+          "nome": "Conjunto Chapa Hotbrownie Redonda 24cm C/madeira"
+        },
+        {
+          "id": 27,
+          "nome": "Cuba Inox C/tampa Para Buffet"
+        },
+        {
+          "id": 28,
+          "nome": "Cuchara Grande Pct C/06 Concha"
+        },
+        {
+          "id": 29,
+          "nome": "Carrinho De Sorvete T350 Thermototal Azul"
+        },
+        {
+          "id": 30,
+          "nome": "Identificador De Sabores Em Branco"
+        },
+        {
+          "id": 31,
+          "nome": "Jarrinha De Porcelana 130ml"
+        },
+        {
+          "id": 32,
+          "nome": "Luminaria Neon Led Tudo Combina 150x25cm"
+        },
+        {
+          "id": 33,
+          "nome": "Taca Banana Split Transparente 200ml"
+        },
+        {
+          "id": 34,
+          "nome": "Taca Colegial Transparente 100ml"
+        },
+        {
+          "id": 35,
+          "nome": "Taca De Vidro Lotus 300ml C/6un"
+        },
+        {
+          "id": 36,
+          "nome": "Touca Loja Fx Frontal Az. Tela Azul Marinho"
+        },
+        {
+          "id": 37,
+          "nome": "Vareta P/ Balao Com Argola Branca Pct C/25un"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "nome": "Coberturas",
+      "total_produtos": 14,
+      "produtos": [
+        {
+          "id": 1,
+          "nome": "Cobertura Guri Morango 300gr Un"
+        },
+        {
+          "id": 2,
+          "nome": "Cobertura Guri Chocolate 300gr Un"
+        },
+        {
+          "id": 3,
+          "nome": "Cobertura Maracuja Selecta - 1,3kg"
+        },
+        {
+          "id": 4,
+          "nome": "Cobertura Selecta Kids Blue Ice 1.3kg"
+        },
+        {
+          "id": 5,
+          "nome": "Cobertura Selecta Kids Blue Ice 300g"
+        },
+        {
+          "id": 6,
+          "nome": "Cobertura Selecta Kids Chiclete T. Frutti 1.3kg"
+        },
+        {
+          "id": 7,
+          "nome": "Cobertura Sorv Selecta Caramelo 1,3kg"
+        },
+        {
+          "id": 8,
+          "nome": "Cobertura Sorv Selecta Kids Chiclete T. Frutti 300g"
+        },
+        {
+          "id": 9,
+          "nome": "Cobertura Sorv Selecta Morango 1,3 Kg"
+        },
+        {
+          "id": 10,
+          "nome": "Cobertura Sorv. Selecta Acai 1.3kg"
+        },
+        {
+          "id": 11,
+          "nome": "Cobertura Sorv. Selecta Chocolate 1,3kg"
+        },
+        {
+          "id": 12,
+          "nome": "Cobertura Sorv. Selecta Doce De Leite 1.3kg"
+        },
+        {
+          "id": 13,
+          "nome": "Cobertura Sorv. Selecta Leite Cond. 1.3kg"
+        },
+        {
+          "id": 14,
+          "nome": "Cobertura Sorv. Selecta Limao 1.3kg"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "nome": "Colheres",
+      "total_produtos": 5,
+      "produtos": [
+        {
+          "id": 1,
+          "nome": "Colher Azul Bic Alongada Cx500 Und"
+        },
+        {
+          "id": 2,
+          "nome": "Colher Azul Bic Longa Cx C/500 Sem Embalagem"
+        },
+        {
+          "id": 3,
+          "nome": "Colher Azul Bic Sobremesa Cx C/1000 Sem Embalagem"
+        },
+        {
+          "id": 4,
+          "nome": "Colher Sobremesa Azul Bic Embalada Cx/500 Unid"
+        },
+        {
+          "id": 5,
+          "nome": "Pazinha Plastica P/sorvete C/1000un"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "nome": "Condimentos",
+      "total_produtos": 3,
+      "produtos": [
+        {
+          "id": 1,
+          "nome": "Ketchup Tradicional Sache 7g Cx C/190"
+        },
+        {
+          "id": 2,
+          "nome": "Maionese Hemmer Sache 7g Cx C/190"
+        },
+        {
+          "id": 3,
+          "nome": "Mostarda Amarela Hemmer 7gr Sachê Cx 190un"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "nome": "Copos e Tampas",
+      "total_produtos": 44,
+      "produtos": [
+        {
+          "id": 1,
+          "nome": "Copo Cartonado 320ml M2 Azul Claro C/50"
+        },
+        {
+          "id": 2,
+          "nome": "Copo Cartonado 720ml M1 Azul E Amarelo C/75"
+        },
+        {
+          "id": 3,
+          "nome": "Copo Cartonado 720ml M2 Azul Escuro C/75"
+        },
+        {
+          "id": 4,
+          "nome": "Copo Cartonado 720ml M3 Azul Claro C/75"
+        },
+        {
+          "id": 5,
+          "nome": "Copo Cartonado Person. Guri Copa 500ml C/50un Sortido"
+        },
+        {
+          "id": 6,
+          "nome": "Copo Termico Liso 300ml"
+        },
+        {
+          "id": 7,
+          "nome": "Copo Termico Liso 400ml"
+        },
+        {
+          "id": 8,
+          "nome": "Copo Termico Liso 500ml"
+        },
+        {
+          "id": 9,
+          "nome": "Copo Termico Liso 700ml"
+        },
+        {
+          "id": 10,
+          "nome": "Tampa Copo Cartonado 320ml C/50"
+        },
+        {
+          "id": 11,
+          "nome": "Tampa Copo Cartonado 500ml C/50"
+        },
+        {
+          "id": 12,
+          "nome": "Tampa Copo Cartonado 720ml C/50"
+        },
+        {
+          "id": 13,
+          "nome": "Copo Cartonado Person. Guri 120ml C/50un"
+        },
+        {
+          "id": 14,
+          "nome": "Copo Cartonado Person. Guri 240ml C/50un"
+        },
+        {
+          "id": 15,
+          "nome": "Copo Cartonado Person. Guri 480ml C/50un"
+        },
+        {
+          "id": 16,
+          "nome": "Tampa Copo Cartonado 120ml Pp C/50un"
+        },
+        {
+          "id": 17,
+          "nome": "Tampa Copo Cartonado Novo 240ml C/200"
+        },
+        {
+          "id": 18,
+          "nome": "Tampa Copo Cartonado Novo 480ml C/240"
+        },
+        {
+          "id": 19,
+          "nome": "Copo Personalizado 330ml C/50"
+        },
+        {
+          "id": 20,
+          "nome": "Copo Personalizado 440ml C/50"
+        },
+        {
+          "id": 21,
+          "nome": "Copo Personalizado 550ml C/50"
+        },
+        {
+          "id": 22,
+          "nome": "Copo Transp. Liso Desc. 440ml Pct C/ 50un"
+        },
+        {
+          "id": 23,
+          "nome": "Copo Transp. Liso Desc. 550ml Pct C/ 50un"
+        },
+        {
+          "id": 24,
+          "nome": "Tampa Bolha P/ Copo 275 E 300ml C/ Furo C/1000"
+        },
+        {
+          "id": 25,
+          "nome": "Tampa Bolha P/ Copo 440, 550, 660 Ml C/ Furo C/ 1000 Unid"
+        },
+        {
+          "id": 26,
+          "nome": "Tampa Com Furo P/copos 275, 330 Ml C/1000"
+        },
+        {
+          "id": 27,
+          "nome": "Tampa Com Furo P/copos 440, 550, 660ml C/1000"
+        },
+        {
+          "id": 28,
+          "nome": "Copo Termico 300ml 1 Cor C/25un"
+        },
+        {
+          "id": 29,
+          "nome": "Copo Termico 400ml 1 Cor C/25un"
+        },
+        {
+          "id": 30,
+          "nome": "Copo Termico 500ml 1 Cor C/25un"
+        },
+        {
+          "id": 31,
+          "nome": "Copo Termico 700ml 1 Cor C/15un"
+        },
+        {
+          "id": 32,
+          "nome": "Tampa Bops S/furo P/copo Termico 250/300ml C/600 10pct C/60"
+        },
+        {
+          "id": 33,
+          "nome": "Tampa Bops S/furo P/copo Termico 350/400/500/700ml C/75"
+        },
+        {
+          "id": 34,
+          "nome": "Copo Plast. Descartavel 50ml Pct C/100un"
+        },
+        {
+          "id": 35,
+          "nome": "Copo Plast. Descartavel 180ml Pct C/100un"
+        },
+        {
+          "id": 36,
+          "nome": "Copo Cartonado 500ml M2 Azul Escuro C/50"
+        },
+        {
+          "id": 37,
+          "nome": "Copo Transp. Liso Desc. 660ml Pct C/ 25un"
+        },
+        {
+          "id": 38,
+          "nome": "Copo Cartonado 500ml M3 Azul E Branco C/50"
+        },
+        {
+          "id": 39,
+          "nome": "Copo Cartonado 320ml M1 Azul Escuro C/50"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "nome": "Doces",
+      "total_produtos": 14,
+      "produtos": [
+        {
+          "id": 1,
+          "nome": "Big Cereal Misto 500gr"
+        },
+        {
+          "id": 2,
+          "nome": "Chocopowerball 500gr"
+        },
+        {
+          "id": 3,
+          "nome": "Mini Cereal Chocolate 300gr"
+        },
+        {
+          "id": 4,
+          "nome": "Mini Cereal Misto 500gr"
+        },
+        {
+          "id": 5,
+          "nome": "Farofa De Paçoca 1,005kg Kuky"
+        },
+        {
+          "id": 6,
+          "nome": "Amendoim Granulado S/ Sal Santa Helena 1,05kg"
+        },
+        {
+          "id": 7,
+          "nome": "Bis Lacta Ao Leite 100gr"
+        },
+        {
+          "id": 8,
+          "nome": "Bombom Sonho De Valsa Pct 1kg"
+        },
+        {
+          "id": 9,
+          "nome": "Chocolate Granulado Mavalerio 500gr"
+        },
+        {
+          "id": 10,
+          "nome": "Coloreti Ball 500g"
+        },
+        {
+          "id": 11,
+          "nome": "Coloreti Mini Pcte 10x1 Kg"
+        },
+        {
+          "id": 12,
+          "nome": "Coloreti Mini Sortido A Granel 5kg"
+        },
+        {
+          "id": 13,
+          "nome": "Gotas De Chocolate Pingo 1kg Mavalerio"
+        },
+        {
+          "id": 14,
+          "nome": "Granulado Colorido Mavalerio 500gr"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "nome": "Guardanapos",
+      "total_produtos": 2,
+      "produtos": [
+        {
+          "id": 1,
+          "nome": "Guardanapo Sache Personalizado 30 X 14 Cx C/1000un"
+        },
+        {
+          "id": 2,
+          "nome": "Papel De Embrulho Para Lanches 40x30 C/500 Folhas"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "nome": "Higiene e Limpeza",
+      "total_produtos": 9,
+      "produtos": [
+        {
+          "id": 1,
+          "nome": "Luva Latex Multi Uso Par Tam. Gg"
+        },
+        {
+          "id": 2,
+          "nome": "Luva Latex Multi Uso Par Tam. P"
+        },
+        {
+          "id": 3,
+          "nome": "Luva Nitrilica Preta S/po G C/100un"
+        },
+        {
+          "id": 4,
+          "nome": "Luva Talge Nitrilica Vinil S/po G C/100un"
+        },
+        {
+          "id": 5,
+          "nome": "Papel Toalha Interfolhas Branco C/1000f"
+        },
+        {
+          "id": 6,
+          "nome": "Saco De Lixo Rolo De 50l"
+        },
+        {
+          "id": 7,
+          "nome": "Saco Lixo 100l C/25un"
+        },
+        {
+          "id": 8,
+          "nome": "Saco Lixo 200l C/25un"
+        },
+        {
+          "id": 9,
+          "nome": "Saco Lixo Preto Rolo 30l"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "nome": "Máquinas",
+      "total_produtos": 14,
+      "produtos": [
+        {
+          "id": 1,
+          "nome": "Balanca Eletronica Para Loja"
+        },
+        {
+          "id": 2,
+          "nome": "Conj Torneira Prchoco-03l"
+        },
+        {
+          "id": 3,
+          "nome": "Conversor Balanca"
+        },
+        {
+          "id": 4,
+          "nome": "Fritadeira Eletrica Cuba Quadrada 3lt Com Tampa"
+        },
+        {
+          "id": 5,
+          "nome": "Batedor De Milk Shake Copo 450ml, 500w Bm71"
+        },
+        {
+          "id": 6,
+          "nome": "Chocolateira Chocopro 3l 220v"
+        },
+        {
+          "id": 7,
+          "nome": "Derretedeira Multiuso Cm-5l/2 127v - Inovamaq"
+        },
+        {
+          "id": 8,
+          "nome": "Fogao Eletrico Mesa 220v Agratto 1 Prato"
+        },
+        {
+          "id": 9,
+          "nome": "Fogao Eletrico Mesa Agratto 1 Prato 127w"
+        },
+        {
+          "id": 10,
+          "nome": "Fogao Eletrico Mesa Agratto 127w 2 Pratos"
+        },
+        {
+          "id": 11,
+          "nome": "Molheira Banho Maria Inox 2 Cubas 5kg Prof"
+        },
+        {
+          "id": 12,
+          "nome": "Máquina Crepe Suíço Elétrico 6 Cavidades 220v Progás"
+        },
+        {
+          "id": 13,
+          "nome": "Máquina Industrial Bubble Waffle Prkb-10 220v Progás"
+        },
+        {
+          "id": 14,
+          "nome": "Sanduicheira Agratto Black 220v"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "nome": "Mesas",
+      "total_produtos": 2,
+      "produtos": [
+        {
+          "id": 1,
+          "nome": "Cadeira Plástica Preta"
+        },
+        {
+          "id": 2,
+          "nome": "Mesa Plástica Preta"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "nome": "Pastas e Cremes",
+      "total_produtos": 36,
+      "produtos": [
+        {
+          "id": 1,
+          "nome": "Cereja Curico 3,1kg"
+        },
+        {
+          "id": 2,
+          "nome": "Chanty Mais Norcau 1l Leite Em Po"
+        },
+        {
+          "id": 3,
+          "nome": "Choco Brownie 4kg"
+        },
+        {
+          "id": 4,
+          "nome": "Choco Buenissimo 4kg"
+        },
+        {
+          "id": 5,
+          "nome": "Choco Trufa 4kg"
+        },
+        {
+          "id": 6,
+          "nome": "Chococrema 4g"
+        },
+        {
+          "id": 7,
+          "nome": "Chocoskimo Branco Essencial 12kg"
+        },
+        {
+          "id": 8,
+          "nome": "Chocoskimo Meio Amargo Essencial 12kg"
+        },
+        {
+          "id": 9,
+          "nome": "Chocoskimo Meio Amargo Essencial 4kg"
+        },
+        {
+          "id": 10,
+          "nome": "Chocotine 4kg"
+        },
+        {
+          "id": 11,
+          "nome": "Creme De Avelã Com Cacau - Vabene"
+        },
+        {
+          "id": 12,
+          "nome": "Creme De Coco Branco 4kg"
+        },
+        {
+          "id": 13,
+          "nome": "Creme De Dorella 4kg"
+        },
+        {
+          "id": 14,
+          "nome": "Creme De Paçoca 4kg"
+        },
+        {
+          "id": 15,
+          "nome": "Dorella Branca 4kg"
+        },
+        {
+          "id": 16,
+          "nome": "Dorella Essencial 4kg"
+        },
+        {
+          "id": 17,
+          "nome": "Geleia Tangerina Com Pimenta 2kg"
+        },
+        {
+          "id": 18,
+          "nome": "Lattiello Mescla Leitinho 4kg"
+        },
+        {
+          "id": 19,
+          "nome": "Leitinho Essencial 4kg"
+        },
+        {
+          "id": 20,
+          "nome": "Pasta Chocolate Com Malte Selecta Classic 4kg"
+        },
+        {
+          "id": 21,
+          "nome": "Pasta Creme De Amendoim Com Pedacos Specialita 3kg"
+        },
+        {
+          "id": 22,
+          "nome": "Pasta Creme Leitinho Latinho Classic Selecta 4kg"
+        },
+        {
+          "id": 23,
+          "nome": "Pasta Marshmallow Blue Ice 3,5kg"
+        },
+        {
+          "id": 24,
+          "nome": "Pasta Marshmallow Chiclete 3,5kg"
+        },
+        {
+          "id": 25,
+          "nome": "Pasta Sabor Cookies Branco Selecta Classic 4kg"
+        },
+        {
+          "id": 26,
+          "nome": "Pasta Selecta Classic Gianduia 4kg"
+        },
+        {
+          "id": 27,
+          "nome": "Pasta Variegato Frutas Do Bosque Specialita 2,02 Kg"
+        },
+        {
+          "id": 28,
+          "nome": "Recheio Amarena 2kg"
+        },
+        {
+          "id": 29,
+          "nome": "Recheio Chocolate Branco Ganache 4kg Ello"
+        },
+        {
+          "id": 30,
+          "nome": "Recheio Chocolate Meio Amargo Ganache 4kg Ello"
+        },
+        {
+          "id": 31,
+          "nome": "Stracciatella Meio Amargo 3,5kg"
+        },
+        {
+          "id": 32,
+          "nome": "Trufa Americana Balde C/ 12 Kg"
+        },
+        {
+          "id": 33,
+          "nome": "Variegato De Pipoca Com Caramelo 3,5kg"
+        },
+        {
+          "id": 34,
+          "nome": "Variegato Pistache Leagel 4kg"
+        },
+        {
+          "id": 35,
+          "nome": "Variegato Pistache Vabene 4kg"
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "nome": "Sacolas",
+      "total_produtos": 4,
+      "produtos": [
+        {
+          "id": 1,
+          "nome": "Sacola Lisa Branca 30 X 40 Fd C/1000 Un"
+        },
+        {
+          "id": 2,
+          "nome": "Sacola Lisa Branca 38 X 48 Fd C/1000 Un"
+        },
+        {
+          "id": 3,
+          "nome": "Sacola Personalizada 30x40 C/1000 Unid"
+        },
+        {
+          "id": 4,
+          "nome": "Sacola Personalizada 38x50 C/1000 Unid"
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "nome": "Suportes e Embalagens",
+      "total_produtos": 32,
+      "produtos": [
+        {
+          "id": 1,
+          "nome": "Bobina Melhor Sorvete 80mm X 40m Cx/15"
+        },
+        {
+          "id": 2,
+          "nome": "Coroa Sorvetes Guri Azul Pct C/100"
+        },
+        {
+          "id": 3,
+          "nome": "Coroa Sorvetes Guri Rosa Pct C/100"
+        },
+        {
+          "id": 4,
+          "nome": "Estojo Bh-101"
+        },
+        {
+          "id": 5,
+          "nome": "Hamburgueira Isopor Bh01fd C/100"
+        },
+        {
+          "id": 6,
+          "nome": "Hamburgueira Isopor Bh02fd C/100"
+        },
+        {
+          "id": 7,
+          "nome": "Hamburgueira Isopor Bh03fd C/100"
+        },
+        {
+          "id": 8,
+          "nome": "Lancheira Branca Bh-102 Fd C/100"
+        },
+        {
+          "id": 9,
+          "nome": "Marmita Termica G C/100"
+        },
+        {
+          "id": 10,
+          "nome": "Marmita Termica M C/100"
+        },
+        {
+          "id": 11,
+          "nome": "Marmita Termica P C/100"
+        },
+        {
+          "id": 12,
+          "nome": "Papel De Embrulho Para Lanches 40x30 C/500 Folhas"
+        },
+        {
+          "id": 13,
+          "nome": "Saco Kraft 60x44 Liso"
+        },
+        {
+          "id": 14,
+          "nome": "Saco Termico Thermipack C/200"
+        },
+        {
+          "id": 15,
+          "nome": "Suporte Para Copo Duplo Azul Claro C/50"
+        },
+        {
+          "id": 16,
+          "nome": "Tampa Marmita C/100"
+        },
+        {
+          "id": 17,
+          "nome": "Bandeja Meiwa Eps M-52 Azul C/200"
+        },
+        {
+          "id": 18,
+          "nome": "Saco Kraft Personalizado 80x44"
+        },
+        {
+          "id": 19,
+          "nome": "Saco Kraft Personalizado 60x40"
+        },
+        {
+          "id": 20,
+          "nome": "Copo Cartonado 80ml Mini Churros"
+        },
+        {
+          "id": 21,
+          "nome": "Cumbuca Para Crepe Guri Pct C/250"
+        },
+        {
+          "id": 22,
+          "nome": "Emb. Galvanoteck G-550 Bandeja C/div. Preta"
+        },
+        {
+          "id": 23,
+          "nome": "Emb. Praticoack 27x14x4.5 Boat Sushi Preto"
+        }
+      ]
+    }
+  ]
+}
