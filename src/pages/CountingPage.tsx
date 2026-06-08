@@ -64,6 +64,10 @@ export function CountingPage() {
             ? p.favorite
             : p.categoryId === categoryFilter;
       return matchesSearch && matchesCategory;
+    }).sort((a, b) => {
+      if (a.favorite && !b.favorite) return -1;
+      if (!a.favorite && b.favorite) return 1;
+      return a.name.localeCompare(b.name);
     });
   }, [products, search, categoryFilter]);
 

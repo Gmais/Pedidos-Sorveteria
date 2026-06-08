@@ -63,7 +63,11 @@ export function OrderPage() {
         orderItem: matchingOrderItem,
       });
     }
-    return items.sort((a, b) => a.product.name.localeCompare(b.product.name));
+    return items.sort((a, b) => {
+      if (a.product.favorite && !b.product.favorite) return -1;
+      if (!a.product.favorite && b.product.favorite) return 1;
+      return a.product.name.localeCompare(b.product.name);
+    });
   }, [products, latestCounts, orderItems, categoryById]);
 
   const itemsToExport: OrderItem[] = useMemo(

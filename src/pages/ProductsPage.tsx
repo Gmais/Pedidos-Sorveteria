@@ -57,7 +57,16 @@ export function ProductsPage() {
       groups.get(catName)!.push(p);
     }
 
-    return Array.from(groups.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+    return Array.from(groups.entries())
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map(([catName, items]) => {
+        items.sort((a, b) => {
+          if (a.favorite && !b.favorite) return -1;
+          if (!a.favorite && b.favorite) return 1;
+          return a.name.localeCompare(b.name);
+        });
+        return [catName, items] as [string, Product[]];
+      });
   }, [filtered, categoryById]);
 
   async function handleToggleFavorite(e: React.MouseEvent, p: Product) {
