@@ -57,7 +57,7 @@ export function ProductsPage() {
 
     const sortedGroups = Array.from(groups.entries()).sort((a, b) => a[0].localeCompare(b[0]));
     if (favorites.length > 0) {
-      sortedGroups.unshift(['Favoritos ⭐', favorites]);
+      sortedGroups.push(['Favoritos ⭐', favorites]);
     }
     
     return sortedGroups;
