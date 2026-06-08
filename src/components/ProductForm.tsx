@@ -32,11 +32,6 @@ export function ProductForm({ categories, initial, onSubmit, onCancel, onCreateC
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (categories.length > 0 && categoryId === '' && !initial) {
-      setCategoryId(categories[0].id);
-    }
-  }, [categories, categoryId, initial]);
 
   useEffect(() => {
     if (!photoFile) return;
