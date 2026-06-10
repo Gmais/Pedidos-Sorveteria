@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useCollection } from '../hooks/useCollection';
-import { getLatestCounts, upsertCount } from '../firebase/api';
+import { getLatestCounts, upsertCount, deleteCountForProduct } from '../firebase/api';
 import { CountingCard } from '../components/CountingCard';
 import { useStore } from '../contexts/StoreContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -92,10 +92,12 @@ export function CountingPage() {
     const existingTimer = timers.current.get(productId);
     if (existingTimer) clearTimeout(existingTimer);
 
-    if (quantity === null) return;
-
     const timer = setTimeout(async () => {
-      await upsertCount(activeStore, productId, quantity, tenantId);
+      if (quantity === null) {
+        await deleteCountForProduct(activeStore, productId, tenantId);
+      } else {
+        await upsertCount(activeStore, productId, quantity, tenantId);
+      }
       setLastCountedAt(Date.now());
       timers.current.delete(productId);
     }, SAVE_DEBOUNCE_MS);

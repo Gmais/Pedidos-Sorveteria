@@ -97,6 +97,13 @@ export async function getLatestCounts(storeId: StoreId, tenantId?: string): Prom
       map.set(data.productId, { quantity: data.quantity, countedAt: data.countedAt });
     }
   });
+
+  for (const [key, value] of map.entries()) {
+    if (value.quantity < 0) {
+      map.delete(key);
+    }
+  }
+
   return map;
 }
 
@@ -155,27 +162,5 @@ export async function setOrderItemStatus(id: string, status: OrderItemStatus): P
 }
 
 export async function deleteCountForProduct(storeId: StoreId, productId: string, tenantId?: string): Promise<void> {
-  await authReady;
-  const now = Date.now();
-  const constraints: ReturnType<typeof where>[] = [
-    where('storeId', '==', storeId),
-    where('productId', '==', productId),
-  ];
-  if (tenantId) constraints.push(where('tenantId', '==', tenantId));
-  const q = query(collection(firestore, 'counts'), ...constraints);
-  const snapshot = await getDocs(q);
-  
-  const entries = snapshot.docs.map(docSnap => ({
-    ref: docSnap.ref,
-    countedAt: (docSnap.data() as CountEntry).countedAt,
-  }));
-  
-  const latest = entries.reduce<{ ref: DocumentReference; countedAt: number } | null>(
-    (acc, entry) => (!acc || entry.countedAt > acc.countedAt ? entry : acc),
-    null
-  );
-
-  if (latest && isSameDay(latest.countedAt, now)) {
-    await deleteDoc(latest.ref);
-  }
+  await upsertCount(storeId, productId, -1, tenantId ?? '');
 }
