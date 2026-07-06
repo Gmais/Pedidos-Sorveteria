@@ -73,6 +73,11 @@ export function OrderPage() {
     });
   }, [products, latestCounts, orderItems, categoryById]);
 
+  const uncountedFavorites = useMemo(() => {
+    if (!products) return [];
+    return products.filter((p) => p.favorite && p.active && !latestCounts.has(p.id));
+  }, [products, latestCounts]);
+
   const itemsToExport: OrderItem[] = useMemo(
     () =>
       pendingItems.map((item) => ({
@@ -167,6 +172,20 @@ export function OrderPage() {
         <h2 className="text-xl font-bold">Pedido de Reposição</h2>
         <span className="text-sm text-slate-500 dark:text-slate-400">{pendingItems.length} ite(ns)</span>
       </div>
+
+      {uncountedFavorites.length > 0 && (
+        <div className="bg-amber-50 border border-amber-200 dark:bg-amber-900/30 dark:border-amber-700/50 p-4 rounded-xl flex items-start gap-3">
+          <span className="text-xl">⚠️</span>
+          <div>
+            <h3 className="text-sm font-bold text-amber-800 dark:text-amber-300">
+              Produtos favoritos não contados
+            </h3>
+            <p className="text-xs text-amber-700 dark:text-amber-400 mt-1">
+              {uncountedFavorites.map(p => p.name).join(', ')}
+            </p>
+          </div>
+        </div>
+      )}
 
       {hasItems && (
         <div className="flex flex-wrap gap-2">
