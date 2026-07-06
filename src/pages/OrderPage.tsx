@@ -39,6 +39,35 @@ export function OrderPage() {
     };
   }, [activeStore, orderItems]);
 
+  const [ignoredUncounted, setIgnoredUncounted] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    if (!activeStore) return;
+    try {
+      const saved = localStorage.getItem(`ignoredUncounted_${activeStore}`);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.date === new Date().toLocaleDateString()) {
+          setIgnoredUncounted(new Set(parsed.ids));
+          return;
+        }
+      }
+    } catch {}
+    setIgnoredUncounted(new Set());
+  }, [activeStore]);
+
+  function handleIgnoreUncounted(productId: string) {
+    setIgnoredUncounted(prev => {
+      const next = new Set(prev);
+      next.add(productId);
+      localStorage.setItem(`ignoredUncounted_${activeStore}`, JSON.stringify({
+        date: new Date().toLocaleDateString(),
+        ids: Array.from(next)
+      }));
+      return next;
+    });
+  }
+
   const categoryById = useMemo(() => {
     const map = new Map<string, string>();
     categories?.forEach((c) => map.set(c.id, c.name));
@@ -75,8 +104,8 @@ export function OrderPage() {
 
   const uncountedFavorites = useMemo(() => {
     if (!products) return [];
-    return products.filter((p) => p.favorite && p.active && !latestCounts.has(p.id));
-  }, [products, latestCounts]);
+    return products.filter((p) => p.favorite && p.active && !latestCounts.has(p.id) && !ignoredUncounted.has(p.id));
+  }, [products, latestCounts, ignoredUncounted]);
 
   const itemsToExport: OrderItem[] = useMemo(
     () =>
@@ -176,13 +205,23 @@ export function OrderPage() {
       {uncountedFavorites.length > 0 && (
         <div className="bg-amber-50 border border-amber-200 dark:bg-amber-900/30 dark:border-amber-700/50 p-4 rounded-xl flex items-start gap-3">
           <span className="text-xl">⚠️</span>
-          <div>
+          <div className="flex-1">
             <h3 className="text-sm font-bold text-amber-800 dark:text-amber-300">
               Produtos favoritos não contados
             </h3>
-            <p className="text-xs text-amber-700 dark:text-amber-400 mt-1">
-              {uncountedFavorites.map(p => p.name).join(', ')}
-            </p>
+            <div className="mt-3 flex flex-col gap-2">
+              {uncountedFavorites.map(p => (
+                <div key={p.id} className="flex items-center justify-between bg-amber-100/50 dark:bg-amber-900/40 px-3 py-2 rounded-lg border border-amber-200/50 dark:border-amber-700/30">
+                  <span className="text-sm text-amber-900 dark:text-amber-200 font-medium">{p.name}</span>
+                  <button 
+                    onClick={() => handleIgnoreUncounted(p.id)}
+                    className="text-xs font-semibold bg-amber-200/80 dark:bg-amber-800/80 text-amber-800 dark:text-amber-200 px-2.5 py-1.5 rounded-md hover:bg-amber-300 dark:hover:bg-amber-700 transition-colors shadow-sm"
+                  >
+                    Ignorar hoje
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}
