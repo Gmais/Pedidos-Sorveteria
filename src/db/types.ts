@@ -7,6 +7,14 @@ export interface Category {
   tenantId: string;
 }
 
+export interface Freezer {
+  id: string;
+  name: string;
+  categoryIds: string[];
+  storeId: StoreId;
+  tenantId: string;
+}
+
 export interface Product {
   id: string;
   name: string;

@@ -34,6 +34,19 @@ export async function createCategory(name: string, storeId: StoreId, tenantId: s
   return ref.id;
 }
 
+// ---- Freezers ----
+
+export async function createFreezer(
+  name: string,
+  categoryIds: string[],
+  storeId: StoreId,
+  tenantId: string
+): Promise<string> {
+  await authReady;
+  const ref = await addDoc(collection(firestore, 'freezers'), { name, categoryIds, storeId, tenantId });
+  return ref.id;
+}
+
 // ---- Products ----
 
 export async function addProduct(data: Omit<Product, 'id'>): Promise<string> {
