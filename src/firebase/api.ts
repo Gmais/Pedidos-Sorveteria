@@ -9,6 +9,7 @@ import {
   query,
   updateDoc,
   where,
+  writeBatch,
   type DocumentReference,
   type FieldValue,
 } from 'firebase/firestore';
@@ -163,4 +164,20 @@ export async function setOrderItemStatus(id: string, status: OrderItemStatus): P
 
 export async function deleteCountForProduct(storeId: StoreId, productId: string, tenantId?: string): Promise<void> {
   await upsertCount(storeId, productId, -1, tenantId ?? '');
+}
+
+export async function startNewCount(storeId: StoreId, tenantId: string): Promise<string> {
+  await authReady;
+  const q = query(
+    collection(firestore, 'counts'),
+    where('storeId', '==', storeId),
+    where('tenantId', '==', tenantId)
+  );
+  const snapshot = await getDocs(q);
+  const batch = writeBatch(firestore);
+  snapshot.forEach((docSnap) => batch.delete(docSnap.ref));
+  await batch.commit();
+
+  const ref = await addDoc(collection(firestore, 'orders'), { createdAt: Date.now(), storeId, tenantId });
+  return ref.id;
 }

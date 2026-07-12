@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useCollection } from '../hooks/useCollection';
-import { getLatestCounts, upsertCount, deleteCountForProduct } from '../firebase/api';
+import { getLatestCounts, upsertCount, deleteCountForProduct, startNewCount } from '../firebase/api';
 import { CountingCard } from '../components/CountingCard';
 import { useStore } from '../contexts/StoreContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -21,6 +21,7 @@ export function CountingPage() {
   const [counts, setCounts] = useState<Map<string, number | null>>(new Map());
   const [lastCountedAt, setLastCountedAt] = useState<number | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const [startingNew, setStartingNew] = useState(false);
 
   const timers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
@@ -104,19 +105,42 @@ export function CountingPage() {
     timers.current.set(productId, timer);
   }
 
+  async function handleNewCount() {
+    if (!window.confirm('Isso vai zerar a contagem de todos os produtos e iniciar um novo pedido. Deseja continuar?')) {
+      return;
+    }
+    setStartingNew(true);
+    try {
+      await startNewCount(activeStore, tenantId);
+      setCounts(new Map());
+      setLastCountedAt(null);
+    } finally {
+      setStartingNew(false);
+    }
+  }
+
   return (
     <div className="space-y-5">
-      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 grid grid-cols-2 gap-4">
-        <div>
-          <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Total contados</p>
-          <p className="text-2xl font-bold">{totalCounted}</p>
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 flex flex-wrap items-center justify-between gap-4">
+        <div className="flex gap-6">
+          <div>
+            <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Total contados</p>
+            <p className="text-2xl font-bold">{totalCounted}</p>
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Última contagem</p>
+            <p className="text-sm font-medium mt-1">
+              {lastCountedAt ? new Date(lastCountedAt).toLocaleString('pt-BR') : 'Nenhuma contagem ainda'}
+            </p>
+          </div>
         </div>
-        <div>
-          <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Última contagem</p>
-          <p className="text-sm font-medium mt-1">
-            {lastCountedAt ? new Date(lastCountedAt).toLocaleString('pt-BR') : 'Nenhuma contagem ainda'}
-          </p>
-        </div>
+        <button
+          onClick={handleNewCount}
+          disabled={startingNew}
+          className="px-4 py-2.5 rounded-lg bg-guri-blue text-white text-sm font-medium hover:bg-guri-blue-hover transition-colors disabled:opacity-60 shrink-0"
+        >
+          {startingNew ? 'Reiniciando...' : 'Nova Contagem'}
+        </button>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3">
