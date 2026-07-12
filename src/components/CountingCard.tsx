@@ -30,18 +30,18 @@ export function CountingCard({ product, quantity, onChange }: CountingCardProps)
   }
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-row sm:flex-col items-center sm:items-stretch hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
       <button
         onClick={handlePhotoTap}
-        className="block w-full active:opacity-80 transition-opacity"
+        className="block shrink-0 w-20 h-20 sm:w-full sm:h-auto active:opacity-80 transition-opacity"
         aria-label={`Tocar para contar ${product.name}`}
       >
-        <ProductPhoto photoUrl={product.photoUrl} name={product.name} className="w-full aspect-square" />
+        <ProductPhoto photoUrl={product.photoUrl} name={product.name} className="w-20 h-20 sm:w-full sm:h-auto sm:aspect-square" />
       </button>
-      <div className="p-3 flex flex-col gap-2 flex-1">
-        <p className="font-medium text-sm leading-tight line-clamp-2">{product.name}</p>
+      <div className="p-3 flex flex-col gap-2 flex-1 min-w-0">
+        <p className="font-medium text-base sm:text-sm leading-tight line-clamp-2">{product.name}</p>
         <p className="text-xs text-slate-500 dark:text-slate-400">Unidade: {product.unit}</p>
-        <div className="mt-auto flex items-center gap-2">
+        <div className="sm:mt-auto flex items-center gap-2">
           <button
             onClick={handleDecrement}
             disabled={quantity === null}
