@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react';
 import { deleteField } from 'firebase/firestore';
 import { useCollection } from '../hooks/useCollection';
-import { addProduct, createCategory, createFreezer, deleteProduct, updateProduct, toggleProductFavorite } from '../firebase/api';
+import { addProduct, createCategory, createLocation, deleteProduct, updateProduct, toggleProductFavorite } from '../firebase/api';
 import { uploadProductPhoto } from '../cloudinary/api';
 import { useStore } from '../contexts/StoreContext';
 import { useAuth } from '../contexts/AuthContext';
-import type { Category, Freezer, Product } from '../db/types';
+import type { Category, Location, Product } from '../db/types';
 import { ProductPhoto } from '../components/ProductPhoto';
 import { Modal } from '../components/Modal';
 import { ProductForm, type ProductFormResult } from '../components/ProductForm';
@@ -16,17 +16,17 @@ export function ProductsPage() {
   const tenantId = user?.tenantId ?? '';
   const products = useCollection<Product>('products');
   const categories = useCollection<Category>('categories');
-  const freezers = useCollection<Freezer>('freezers');
+  const locations = useCollection<Location>('locations');
 
   const [search, setSearch] = useState('');
-  const [freezerFilter, setFreezerFilter] = useState<string | 'all'>('all');
+  const [locationFilter, setLocationFilter] = useState<string | 'all'>('all');
   const [categoryFilter, setCategoryFilter] = useState<string | 'all'>('all');
   const [modalOpen, setModalOpen] = useState(false);
   const [categoryModalOpen, setCategoryModalOpen] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
-  const [freezerModalOpen, setFreezerModalOpen] = useState(false);
-  const [newFreezerName, setNewFreezerName] = useState('');
-  const [newFreezerCategoryIds, setNewFreezerCategoryIds] = useState<string[]>([]);
+  const [locationModalOpen, setLocationModalOpen] = useState(false);
+  const [newLocationName, setNewLocationName] = useState('');
+  const [newLocationCategoryIds, setNewLocationCategoryIds] = useState<string[]>([]);
   const [editing, setEditing] = useState<Product | undefined>(undefined);
   const [deleting, setDeleting] = useState<Product | undefined>(undefined);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -42,25 +42,25 @@ export function ProductsPage() {
     return [...categories].sort((a, b) => a.name.localeCompare(b.name));
   }, [categories]);
 
-  const sortedFreezers = useMemo(() => {
-    if (!freezers) return [];
-    return [...freezers].sort((a, b) => a.name.localeCompare(b.name));
-  }, [freezers]);
+  const sortedLocations = useMemo(() => {
+    if (!locations) return [];
+    return [...locations].sort((a, b) => a.name.localeCompare(b.name));
+  }, [locations]);
 
-  const activeFreezer = useMemo(
-    () => sortedFreezers.find((f) => f.id === freezerFilter),
-    [sortedFreezers, freezerFilter]
+  const activeLocation = useMemo(
+    () => sortedLocations.find((l) => l.id === locationFilter),
+    [sortedLocations, locationFilter]
   );
 
   const categoryOptions = useMemo(() => {
-    if (!activeFreezer) return sortedCategories;
-    return sortedCategories.filter((c) => activeFreezer.categoryIds.includes(c.id));
-  }, [sortedCategories, activeFreezer]);
+    if (!activeLocation) return sortedCategories;
+    return sortedCategories.filter((c) => activeLocation.categoryIds.includes(c.id));
+  }, [sortedCategories, activeLocation]);
 
-  function handleFreezerFilterChange(value: string) {
-    setFreezerFilter(value);
-    const freezer = sortedFreezers.find((f) => f.id === value);
-    if (freezer && categoryFilter !== 'all' && categoryFilter !== 'favorites' && !freezer.categoryIds.includes(categoryFilter)) {
+  function handleLocationFilterChange(value: string) {
+    setLocationFilter(value);
+    const location = sortedLocations.find((l) => l.id === value);
+    if (location && categoryFilter !== 'all' && categoryFilter !== 'favorites' && !location.categoryIds.includes(categoryFilter)) {
       setCategoryFilter('all');
     }
   }
@@ -69,16 +69,16 @@ export function ProductsPage() {
     if (!products) return [];
     return products.filter((p) => {
       const matchesSearch = p.name.toLowerCase().includes(search.trim().toLowerCase());
-      const matchesFreezer = activeFreezer ? activeFreezer.categoryIds.includes(p.categoryId) : true;
+      const matchesLocation = activeLocation ? activeLocation.categoryIds.includes(p.categoryId) : true;
       const matchesCategory =
         categoryFilter === 'all'
           ? true
           : categoryFilter === 'favorites'
             ? p.favorite
             : p.categoryId === categoryFilter;
-      return matchesSearch && matchesFreezer && matchesCategory;
+      return matchesSearch && matchesLocation && matchesCategory;
     });
-  }, [products, search, categoryFilter, activeFreezer]);
+  }, [products, search, categoryFilter, activeLocation]);
 
   const grouped = useMemo(() => {
     const groups = new Map<string, Product[]>();
@@ -176,23 +176,23 @@ export function ProductsPage() {
     }
   }
 
-  function toggleNewFreezerCategory(categoryId: string) {
-    setNewFreezerCategoryIds((prev) =>
+  function toggleNewLocationCategory(categoryId: string) {
+    setNewLocationCategoryIds((prev) =>
       prev.includes(categoryId) ? prev.filter((id) => id !== categoryId) : [...prev, categoryId]
     );
   }
 
-  async function handleCreateFreezer(e: React.FormEvent) {
+  async function handleCreateLocation(e: React.FormEvent) {
     e.preventDefault();
-    if (!newFreezerName.trim()) return;
+    if (!newLocationName.trim()) return;
     try {
-      await createFreezer(newFreezerName.trim(), newFreezerCategoryIds, activeStore, tenantId);
-      setFreezerModalOpen(false);
-      setNewFreezerName('');
-      setNewFreezerCategoryIds([]);
+      await createLocation(newLocationName.trim(), newLocationCategoryIds, activeStore, tenantId);
+      setLocationModalOpen(false);
+      setNewLocationName('');
+      setNewLocationCategoryIds([]);
     } catch (err) {
       console.error(err);
-      alert('Erro ao criar freezer.');
+      alert('Erro ao criar local.');
     }
   }
 
@@ -217,20 +217,20 @@ export function ProductsPage() {
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="flex gap-2">
           <select
-            value={freezerFilter}
-            onChange={(e) => handleFreezerFilterChange(e.target.value)}
+            value={locationFilter}
+            onChange={(e) => handleLocationFilterChange(e.target.value)}
             className="rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 flex-1 sm:flex-none"
           >
-            <option value="all">Todos os freezers</option>
-            {sortedFreezers.map((f) => (
-              <option key={f.id} value={f.id}>
-                {f.name}
+            <option value="all">Todos os locais</option>
+            {sortedLocations.map((l) => (
+              <option key={l.id} value={l.id}>
+                {l.name}
               </option>
             ))}
           </select>
           <button
-            onClick={() => setFreezerModalOpen(true)}
-            title="Novo freezer"
+            onClick={() => setLocationModalOpen(true)}
+            title="Novo local"
             className="flex items-center justify-center px-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-700 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
           >
             +
@@ -412,21 +412,21 @@ export function ProductsPage() {
         </form>
       </Modal>
 
-      <Modal open={freezerModalOpen} onClose={() => setFreezerModalOpen(false)} title="Novo freezer">
-        <form onSubmit={handleCreateFreezer}>
+      <Modal open={locationModalOpen} onClose={() => setLocationModalOpen(false)} title="Novo local">
+        <form onSubmit={handleCreateLocation}>
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-1">Nome do freezer</label>
+            <label className="block text-sm font-medium mb-1">Nome do local</label>
             <input
               type="text"
-              value={newFreezerName}
-              onChange={(e) => setNewFreezerName(e.target.value)}
+              value={newLocationName}
+              onChange={(e) => setNewLocationName(e.target.value)}
               className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Ex: Freezer 1"
               autoFocus
             />
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">Categorias agrupadas neste freezer</label>
+            <label className="block text-sm font-medium mb-2">Categorias agrupadas neste local</label>
             <div className="max-h-48 overflow-y-auto space-y-1.5 border border-slate-200 dark:border-slate-700 rounded-lg p-3">
               {sortedCategories.length === 0 && (
                 <p className="text-sm text-slate-500 dark:text-slate-400">Nenhuma categoria cadastrada ainda.</p>
@@ -435,8 +435,8 @@ export function ProductsPage() {
                 <label key={c.id} className="flex items-center gap-2 text-sm">
                   <input
                     type="checkbox"
-                    checked={newFreezerCategoryIds.includes(c.id)}
-                    onChange={() => toggleNewFreezerCategory(c.id)}
+                    checked={newLocationCategoryIds.includes(c.id)}
+                    onChange={() => toggleNewLocationCategory(c.id)}
                     className="rounded border-slate-300 dark:border-slate-600 text-guri-blue focus:ring-guri-blue"
                   />
                   {c.name}
@@ -447,14 +447,14 @@ export function ProductsPage() {
           <div className="flex gap-3">
             <button
               type="button"
-              onClick={() => setFreezerModalOpen(false)}
+              onClick={() => setLocationModalOpen(false)}
               className="flex-1 px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 font-medium hover:bg-slate-50 dark:hover:bg-slate-700"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              disabled={!newFreezerName.trim()}
+              disabled={!newLocationName.trim()}
               className="flex-1 px-4 py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 disabled:opacity-60"
             >
               Criar

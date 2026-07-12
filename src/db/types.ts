@@ -7,7 +7,7 @@ export interface Category {
   tenantId: string;
 }
 
-export interface Freezer {
+export interface Location {
   id: string;
   name: string;
   categoryIds: string[];

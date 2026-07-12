@@ -4,7 +4,7 @@ import { getLatestCounts, upsertCount, deleteCountForProduct, startNewCount } fr
 import { CountingCard } from '../components/CountingCard';
 import { useStore } from '../contexts/StoreContext';
 import { useAuth } from '../contexts/AuthContext';
-import type { Category, Product } from '../db/types';
+import type { Category, Location, Product } from '../db/types';
 
 const SAVE_DEBOUNCE_MS = 500;
 
@@ -14,9 +14,11 @@ export function CountingPage() {
   const tenantId = user?.tenantId ?? '';
   const allProducts = useCollection<Product>('products');
   const categories = useCollection<Category>('categories');
+  const locations = useCollection<Location>('locations');
   const products = useMemo(() => allProducts?.filter((p) => p.active), [allProducts]);
 
   const [search, setSearch] = useState('');
+  const [locationFilter, setLocationFilter] = useState<string | 'all'>('all');
   const [categoryFilter, setCategoryFilter] = useState<string | 'all'>('all');
   const [counts, setCounts] = useState<Map<string, number | null>>(new Map());
   const [lastCountedAt, setLastCountedAt] = useState<number | null>(null);
@@ -57,23 +59,47 @@ export function CountingPage() {
     return [...categories].sort((a, b) => a.name.localeCompare(b.name));
   }, [categories]);
 
+  const sortedLocations = useMemo(() => {
+    if (!locations) return [];
+    return [...locations].sort((a, b) => a.name.localeCompare(b.name));
+  }, [locations]);
+
+  const activeLocation = useMemo(
+    () => sortedLocations.find((l) => l.id === locationFilter),
+    [sortedLocations, locationFilter]
+  );
+
+  const categoryOptions = useMemo(() => {
+    if (!activeLocation) return sortedCategories;
+    return sortedCategories.filter((c) => activeLocation.categoryIds.includes(c.id));
+  }, [sortedCategories, activeLocation]);
+
+  function handleLocationFilterChange(value: string) {
+    setLocationFilter(value);
+    const location = sortedLocations.find((l) => l.id === value);
+    if (location && categoryFilter !== 'all' && categoryFilter !== 'favorites' && !location.categoryIds.includes(categoryFilter)) {
+      setCategoryFilter('all');
+    }
+  }
+
   const filtered = useMemo(() => {
     if (!products) return [];
     return products.filter((p) => {
       const matchesSearch = p.name.toLowerCase().includes(search.trim().toLowerCase());
-      const matchesCategory = 
-        categoryFilter === 'all' 
-          ? true 
+      const matchesLocation = activeLocation ? activeLocation.categoryIds.includes(p.categoryId) : true;
+      const matchesCategory =
+        categoryFilter === 'all'
+          ? true
           : categoryFilter === 'favorites'
             ? p.favorite
             : p.categoryId === categoryFilter;
-      return matchesSearch && matchesCategory;
+      return matchesSearch && matchesLocation && matchesCategory;
     }).sort((a, b) => {
       if (a.favorite && !b.favorite) return -1;
       if (!a.favorite && b.favorite) return 1;
       return a.name.localeCompare(b.name);
     });
-  }, [products, search, categoryFilter]);
+  }, [products, search, categoryFilter, activeLocation]);
 
   const totalCounted = useMemo(() => {
     let total = 0;
@@ -145,13 +171,25 @@ export function CountingPage() {
 
       <div className="flex flex-col sm:flex-row gap-3">
           <select
+            value={locationFilter}
+            onChange={(e) => handleLocationFilterChange(e.target.value)}
+            className="rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="all">Todos os locais</option>
+            {sortedLocations.map((l) => (
+              <option key={l.id} value={l.id}>
+                {l.name}
+              </option>
+            ))}
+          </select>
+          <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
             className="rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="all">Todas as categorias</option>
             <option value="favorites">Favoritos ⭐</option>
-            {sortedCategories.map((c) => (
+            {categoryOptions.map((c) => (
             <option key={c.id} value={c.id}>
               {c.name}
             </option>

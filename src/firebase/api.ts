@@ -34,16 +34,16 @@ export async function createCategory(name: string, storeId: StoreId, tenantId: s
   return ref.id;
 }
 
-// ---- Freezers ----
+// ---- Locations ----
 
-export async function createFreezer(
+export async function createLocation(
   name: string,
   categoryIds: string[],
   storeId: StoreId,
   tenantId: string
 ): Promise<string> {
   await authReady;
-  const ref = await addDoc(collection(firestore, 'freezers'), { name, categoryIds, storeId, tenantId });
+  const ref = await addDoc(collection(firestore, 'locations'), { name, categoryIds, storeId, tenantId });
   return ref.id;
 }
 
