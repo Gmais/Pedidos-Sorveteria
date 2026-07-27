@@ -2,6 +2,7 @@ import {
   addDoc,
   collection,
   deleteDoc,
+  deleteField,
   doc,
   getDocs,
   limit,
@@ -45,6 +46,23 @@ export async function createLocation(
   await authReady;
   const ref = await addDoc(collection(firestore, 'locations'), { name, categoryIds, storeId, tenantId });
   return ref.id;
+}
+
+export async function updateLocation(id: string, name: string): Promise<void> {
+  await authReady;
+  await updateDoc(doc(firestore, 'locations', id), { name });
+}
+
+export async function deleteLocation(id: string): Promise<void> {
+  await authReady;
+  const productsQuery = query(collection(firestore, 'products'), where('locationId', '==', id));
+  const productsSnapshot = await getDocs(productsQuery);
+  if (!productsSnapshot.empty) {
+    const batch = writeBatch(firestore);
+    productsSnapshot.forEach((docSnap) => batch.update(docSnap.ref, { locationId: deleteField() }));
+    await batch.commit();
+  }
+  await deleteDoc(doc(firestore, 'locations', id));
 }
 
 // ---- Products ----
