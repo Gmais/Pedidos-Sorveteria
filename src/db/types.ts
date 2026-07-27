@@ -19,6 +19,7 @@ export interface Product {
   id: string;
   name: string;
   categoryId: string;
+  locationId?: string;
   idealQuantity: number;
   unit: string;
   active: boolean;

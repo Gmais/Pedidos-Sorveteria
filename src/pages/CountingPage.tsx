@@ -64,29 +64,11 @@ export function CountingPage() {
     return [...locations].sort((a, b) => a.name.localeCompare(b.name));
   }, [locations]);
 
-  const activeLocation = useMemo(
-    () => sortedLocations.find((l) => l.id === locationFilter),
-    [sortedLocations, locationFilter]
-  );
-
-  const categoryOptions = useMemo(() => {
-    if (!activeLocation) return sortedCategories;
-    return sortedCategories.filter((c) => activeLocation.categoryIds.includes(c.id));
-  }, [sortedCategories, activeLocation]);
-
-  function handleLocationFilterChange(value: string) {
-    setLocationFilter(value);
-    const location = sortedLocations.find((l) => l.id === value);
-    if (location && categoryFilter !== 'all' && categoryFilter !== 'favorites' && !location.categoryIds.includes(categoryFilter)) {
-      setCategoryFilter('all');
-    }
-  }
-
   const filtered = useMemo(() => {
     if (!products) return [];
     return products.filter((p) => {
       const matchesSearch = p.name.toLowerCase().includes(search.trim().toLowerCase());
-      const matchesLocation = activeLocation ? activeLocation.categoryIds.includes(p.categoryId) : true;
+      const matchesLocation = locationFilter === 'all' ? true : p.locationId === locationFilter;
       const matchesCategory =
         categoryFilter === 'all'
           ? true
@@ -99,7 +81,7 @@ export function CountingPage() {
       if (!a.favorite && b.favorite) return 1;
       return a.name.localeCompare(b.name);
     });
-  }, [products, search, categoryFilter, activeLocation]);
+  }, [products, search, categoryFilter, locationFilter]);
 
   const totalCounted = useMemo(() => {
     let total = 0;
@@ -172,7 +154,7 @@ export function CountingPage() {
       <div className="flex flex-col sm:flex-row gap-3">
           <select
             value={locationFilter}
-            onChange={(e) => handleLocationFilterChange(e.target.value)}
+            onChange={(e) => setLocationFilter(e.target.value)}
             className="rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="all">Todos os locais</option>
@@ -189,7 +171,7 @@ export function CountingPage() {
           >
             <option value="all">Todas as categorias</option>
             <option value="favorites">Favoritos ⭐</option>
-            {categoryOptions.map((c) => (
+            {sortedCategories.map((c) => (
             <option key={c.id} value={c.id}>
               {c.name}
             </option>

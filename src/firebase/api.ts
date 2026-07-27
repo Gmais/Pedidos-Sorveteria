@@ -181,15 +181,28 @@ export async function deleteCountForProduct(storeId: StoreId, productId: string,
 
 export async function startNewCount(storeId: StoreId, tenantId: string): Promise<string> {
   await authReady;
-  const q = query(
+  const countsQuery = query(
     collection(firestore, 'counts'),
     where('storeId', '==', storeId),
     where('tenantId', '==', tenantId)
   );
-  const snapshot = await getDocs(q);
+  const countsSnapshot = await getDocs(countsQuery);
   const batch = writeBatch(firestore);
-  snapshot.forEach((docSnap) => batch.delete(docSnap.ref));
+  countsSnapshot.forEach((docSnap) => batch.delete(docSnap.ref));
   await batch.commit();
+
+  const orderItemsQuery = query(
+    collection(firestore, 'orderItems'),
+    where('storeId', '==', storeId),
+    where('tenantId', '==', tenantId),
+    where('status', '==', 'ordered')
+  );
+  const orderItemsSnapshot = await getDocs(orderItemsQuery);
+  if (!orderItemsSnapshot.empty) {
+    const statusBatch = writeBatch(firestore);
+    orderItemsSnapshot.forEach((docSnap) => statusBatch.update(docSnap.ref, { status: 'pending' }));
+    await statusBatch.commit();
+  }
 
   const ref = await addDoc(collection(firestore, 'orders'), { createdAt: Date.now(), storeId, tenantId });
   return ref.id;

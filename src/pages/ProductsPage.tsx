@@ -26,7 +26,6 @@ export function ProductsPage() {
   const [newCategoryName, setNewCategoryName] = useState('');
   const [locationModalOpen, setLocationModalOpen] = useState(false);
   const [newLocationName, setNewLocationName] = useState('');
-  const [newLocationCategoryIds, setNewLocationCategoryIds] = useState<string[]>([]);
   const [editing, setEditing] = useState<Product | undefined>(undefined);
   const [deleting, setDeleting] = useState<Product | undefined>(undefined);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -47,29 +46,11 @@ export function ProductsPage() {
     return [...locations].sort((a, b) => a.name.localeCompare(b.name));
   }, [locations]);
 
-  const activeLocation = useMemo(
-    () => sortedLocations.find((l) => l.id === locationFilter),
-    [sortedLocations, locationFilter]
-  );
-
-  const categoryOptions = useMemo(() => {
-    if (!activeLocation) return sortedCategories;
-    return sortedCategories.filter((c) => activeLocation.categoryIds.includes(c.id));
-  }, [sortedCategories, activeLocation]);
-
-  function handleLocationFilterChange(value: string) {
-    setLocationFilter(value);
-    const location = sortedLocations.find((l) => l.id === value);
-    if (location && categoryFilter !== 'all' && categoryFilter !== 'favorites' && !location.categoryIds.includes(categoryFilter)) {
-      setCategoryFilter('all');
-    }
-  }
-
   const filtered = useMemo(() => {
     if (!products) return [];
     return products.filter((p) => {
       const matchesSearch = p.name.toLowerCase().includes(search.trim().toLowerCase());
-      const matchesLocation = activeLocation ? activeLocation.categoryIds.includes(p.categoryId) : true;
+      const matchesLocation = locationFilter === 'all' ? true : p.locationId === locationFilter;
       const matchesCategory =
         categoryFilter === 'all'
           ? true
@@ -78,7 +59,7 @@ export function ProductsPage() {
             : p.categoryId === categoryFilter;
       return matchesSearch && matchesLocation && matchesCategory;
     });
-  }, [products, search, categoryFilter, activeLocation]);
+  }, [products, search, categoryFilter, locationFilter]);
 
   const grouped = useMemo(() => {
     const groups = new Map<string, Product[]>();
@@ -139,6 +120,7 @@ export function ProductsPage() {
       const base = {
         name: data.name,
         categoryId: data.categoryId,
+        locationId: data.locationId,
         idealQuantity: data.idealQuantity,
         unit: data.unit,
         active: data.active,
@@ -176,20 +158,13 @@ export function ProductsPage() {
     }
   }
 
-  function toggleNewLocationCategory(categoryId: string) {
-    setNewLocationCategoryIds((prev) =>
-      prev.includes(categoryId) ? prev.filter((id) => id !== categoryId) : [...prev, categoryId]
-    );
-  }
-
   async function handleCreateLocation(e: React.FormEvent) {
     e.preventDefault();
     if (!newLocationName.trim()) return;
     try {
-      await createLocation(newLocationName.trim(), newLocationCategoryIds, activeStore, tenantId);
+      await createLocation(newLocationName.trim(), [], activeStore, tenantId);
       setLocationModalOpen(false);
       setNewLocationName('');
-      setNewLocationCategoryIds([]);
     } catch (err) {
       console.error(err);
       alert('Erro ao criar local.');
@@ -218,7 +193,7 @@ export function ProductsPage() {
         <div className="flex gap-2">
           <select
             value={locationFilter}
-            onChange={(e) => handleLocationFilterChange(e.target.value)}
+            onChange={(e) => setLocationFilter(e.target.value)}
             className="rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 flex-1 sm:flex-none"
           >
             <option value="all">Todos os locais</option>
@@ -244,7 +219,7 @@ export function ProductsPage() {
           >
             <option value="all">Todas as categorias</option>
             <option value="favorites">Favoritos ⭐</option>
-            {categoryOptions.map((c) => (
+            {sortedCategories.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.name}
               </option>
@@ -353,10 +328,12 @@ export function ProductsPage() {
         {saveError && <p className="mb-3 text-sm text-red-600 dark:text-red-400">{saveError}</p>}
         <ProductForm
           categories={sortedCategories}
+          locations={sortedLocations}
           initial={editing}
           onCancel={() => setModalOpen(false)}
           onSubmit={handleSubmit}
           onCreateCategory={(name) => createCategory(name, activeStore, tenantId)}
+          onCreateLocation={(name) => createLocation(name, [], activeStore, tenantId)}
         />
       </Modal>
 
@@ -424,25 +401,6 @@ export function ProductsPage() {
               placeholder="Ex: Freezer 1"
               autoFocus
             />
-          </div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">Categorias agrupadas neste local</label>
-            <div className="max-h-48 overflow-y-auto space-y-1.5 border border-slate-200 dark:border-slate-700 rounded-lg p-3">
-              {sortedCategories.length === 0 && (
-                <p className="text-sm text-slate-500 dark:text-slate-400">Nenhuma categoria cadastrada ainda.</p>
-              )}
-              {sortedCategories.map((c) => (
-                <label key={c.id} className="flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={newLocationCategoryIds.includes(c.id)}
-                    onChange={() => toggleNewLocationCategory(c.id)}
-                    className="rounded border-slate-300 dark:border-slate-600 text-guri-blue focus:ring-guri-blue"
-                  />
-                  {c.name}
-                </label>
-              ))}
-            </div>
           </div>
           <div className="flex gap-3">
             <button

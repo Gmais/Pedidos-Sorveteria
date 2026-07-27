@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import type { Category, Product } from '../db/types';
+import type { Category, Location, Product } from '../db/types';
 import { UNITS } from '../db/types';
 
 export interface ProductFormResult {
   name: string;
   categoryId: string;
+  locationId: string;
   idealQuantity: number;
   unit: string;
   active: boolean;
@@ -14,16 +15,20 @@ export interface ProductFormResult {
 
 interface ProductFormProps {
   categories: Category[];
+  locations: Location[];
   initial?: Product;
   onSubmit: (data: ProductFormResult) => Promise<void>;
   onCancel: () => void;
   onCreateCategory: (name: string) => Promise<string>;
+  onCreateLocation: (name: string) => Promise<string>;
 }
 
-export function ProductForm({ categories, initial, onSubmit, onCancel, onCreateCategory }: ProductFormProps) {
+export function ProductForm({ categories, locations, initial, onSubmit, onCancel, onCreateCategory, onCreateLocation }: ProductFormProps) {
   const [name, setName] = useState(initial?.name ?? '');
   const [categoryId, setCategoryId] = useState<string>(initial?.categoryId ?? '');
   const [newCategory, setNewCategory] = useState('');
+  const [locationId, setLocationId] = useState<string>(initial?.locationId ?? '');
+  const [newLocation, setNewLocation] = useState('');
   const [idealQuantity, setIdealQuantity] = useState(initial?.idealQuantity?.toString() ?? '');
   const [unit, setUnit] = useState(initial?.unit ?? UNITS[0]);
   const [active, setActive] = useState(initial?.active ?? true);
@@ -61,6 +66,13 @@ export function ProductForm({ categories, initial, onSubmit, onCancel, onCreateC
       return;
     }
 
+    let finalLocationId = locationId;
+    const trimmedNewLocation = newLocation.trim();
+    if (trimmedNewLocation) {
+      const existing = locations.find((l) => l.name.toLowerCase() === trimmedNewLocation.toLowerCase());
+      finalLocationId = existing ? existing.id : await onCreateLocation(trimmedNewLocation);
+    }
+
     const ideal = Number(idealQuantity);
     if (!idealQuantity || Number.isNaN(ideal) || ideal < 0) {
       setError('Informe uma quantidade ideal válida.');
@@ -72,6 +84,7 @@ export function ProductForm({ categories, initial, onSubmit, onCancel, onCreateC
       await onSubmit({
         name: trimmedName,
         categoryId: finalCategoryId,
+        locationId: finalLocationId,
         idealQuantity: ideal,
         unit,
         active,
@@ -152,6 +165,29 @@ export function ProductForm({ categories, initial, onSubmit, onCancel, onCreateC
           onChange={(e) => setNewCategory(e.target.value)}
           className="mt-2 w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
           placeholder="Ou crie uma nova categoria"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium mb-1">Local</label>
+        <select
+          value={locationId}
+          onChange={(e) => setLocationId(e.target.value)}
+          className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">Sem local definido</option>
+          {locations.map((l) => (
+            <option key={l.id} value={l.id}>
+              {l.name}
+            </option>
+          ))}
+        </select>
+        <input
+          type="text"
+          value={newLocation}
+          onChange={(e) => setNewLocation(e.target.value)}
+          className="mt-2 w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+          placeholder="Ou crie um novo local"
         />
       </div>
 
