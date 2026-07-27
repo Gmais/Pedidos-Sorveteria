@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCollection } from '../hooks/useCollection';
-import { getLatestCounts, getLatestCountTimestamp } from '../firebase/api';
+import { getLatestCounts, getLatestCountTimestamp, createLocation } from '../firebase/api';
 import { useStore } from '../contexts/StoreContext';
 import { useAuth } from '../contexts/AuthContext';
+import { Modal } from '../components/Modal';
 import type { Category, Product } from '../db/types';
 
 function StatCard({ label, value, icon, to }: { label: string; value: string | number; icon: string; to?: string }) {
@@ -28,8 +29,12 @@ export function DashboardPage() {
 
   const [latestCounts, setLatestCounts] = useState<Map<string, { quantity: number; countedAt: number }>>(new Map());
   const [lastCountAt, setLastCountAt] = useState<number | null>(null);
+  const [locationModalOpen, setLocationModalOpen] = useState(false);
+  const [newLocationName, setNewLocationName] = useState('');
+  const [savingLocation, setSavingLocation] = useState(false);
 
   useEffect(() => {
+    if (!tenantId) return;
     let cancelled = false;
     Promise.all([getLatestCounts(activeStore, tenantId), getLatestCountTimestamp(activeStore, tenantId)]).then(([counts, ts]) => {
       if (cancelled) return;
@@ -39,7 +44,23 @@ export function DashboardPage() {
     return () => {
       cancelled = true;
     };
-  }, [products, activeStore]);
+  }, [products, activeStore, tenantId]);
+
+  async function handleCreateLocation(e: React.FormEvent) {
+    e.preventDefault();
+    if (!newLocationName.trim()) return;
+    setSavingLocation(true);
+    try {
+      await createLocation(newLocationName.trim(), [], activeStore, tenantId);
+      setLocationModalOpen(false);
+      setNewLocationName('');
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao criar local.');
+    } finally {
+      setSavingLocation(false);
+    }
+  }
 
   const belowIdeal = useMemo(() => {
     if (!products) return 0;
@@ -70,7 +91,7 @@ export function DashboardPage() {
         />
       </div>
 
-      <div className="grid sm:grid-cols-2 gap-3">
+      <div className="grid sm:grid-cols-3 gap-3">
         <Link
           to="/contagem"
           className="bg-blue-600 text-white rounded-xl p-5 flex items-center justify-between hover:bg-blue-700 transition-colors"
@@ -91,7 +112,49 @@ export function DashboardPage() {
           </div>
           <span className="text-3xl">📋</span>
         </Link>
+        <button
+          onClick={() => setLocationModalOpen(true)}
+          className="bg-guri-blue text-white rounded-xl p-5 flex items-center justify-between hover:bg-guri-blue-hover transition-colors text-left"
+        >
+          <div>
+            <p className="font-semibold text-lg">Cadastrar local</p>
+            <p className="text-sm text-blue-100">Crie um novo local de contagem</p>
+          </div>
+          <span className="text-3xl">📍</span>
+        </button>
       </div>
+
+      <Modal open={locationModalOpen} onClose={() => setLocationModalOpen(false)} title="Novo local">
+        <form onSubmit={handleCreateLocation}>
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1">Nome do local</label>
+            <input
+              type="text"
+              value={newLocationName}
+              onChange={(e) => setNewLocationName(e.target.value)}
+              className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Ex: Freezer 1"
+              autoFocus
+            />
+          </div>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => setLocationModalOpen(false)}
+              className="flex-1 px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 font-medium hover:bg-slate-50 dark:hover:bg-slate-700"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={!newLocationName.trim() || savingLocation}
+              className="flex-1 px-4 py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 disabled:opacity-60"
+            >
+              {savingLocation ? 'Criando...' : 'Criar'}
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 }
