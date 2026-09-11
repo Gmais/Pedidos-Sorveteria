@@ -5,7 +5,7 @@ import { ProductPhoto } from '../components/ProductPhoto';
 import { exportOrderToPdf, exportOrderToExcel, shareOnWhatsApp } from '../utils/exportOrder';
 import { useStore } from '../contexts/StoreContext';
 import { useAuth } from '../contexts/AuthContext';
-import type { Category, OrderItem, Product } from '../db/types';
+import type { Category, Location, OrderItem, Product } from '../db/types';
 
 interface PendingItem {
   product: Product;
@@ -18,6 +18,7 @@ interface PendingItem {
 export function OrderPage() {
   const products = useCollection<Product>('products');
   const categories = useCollection<Category>('categories');
+  const locations = useCollection<Location>('locations');
   const orderItems = useCollection<OrderItem>('orderItems');
   const { activeStore } = useStore();
   const { user } = useAuth();
@@ -27,6 +28,9 @@ export function OrderPage() {
   const [exporting, setExporting] = useState<string | null>(null);
   const [toggling, setToggling] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [search, setSearch] = useState('');
+  const [locationFilter, setLocationFilter] = useState<string | 'all'>('all');
+  const [categoryFilter, setCategoryFilter] = useState<string | 'all'>('all');
 
   useEffect(() => {
     let cancelled = false;
@@ -74,6 +78,16 @@ export function OrderPage() {
     return map;
   }, [categories]);
 
+  const sortedCategories = useMemo(() => {
+    if (!categories) return [];
+    return [...categories].sort((a, b) => a.name.localeCompare(b.name));
+  }, [categories]);
+
+  const sortedLocations = useMemo(() => {
+    if (!locations) return [];
+    return [...locations].sort((a, b) => a.name.localeCompare(b.name));
+  }, [locations]);
+
   const pendingItems: PendingItem[] = useMemo(() => {
     if (!products) return [];
     const items: PendingItem[] = [];
@@ -101,6 +115,20 @@ export function OrderPage() {
       return a.product.name.localeCompare(b.product.name);
     });
   }, [products, latestCounts, orderItems, categoryById]);
+
+  const filteredItems = useMemo(() => {
+    return pendingItems.filter((item) => {
+      const matchesSearch = item.product.name.toLowerCase().includes(search.trim().toLowerCase());
+      const matchesLocation = locationFilter === 'all' ? true : item.product.locationId === locationFilter;
+      const matchesCategory =
+        categoryFilter === 'all'
+          ? true
+          : categoryFilter === 'favorites'
+            ? item.product.favorite
+            : item.product.categoryId === categoryFilter;
+      return matchesSearch && matchesLocation && matchesCategory;
+    });
+  }, [pendingItems, search, locationFilter, categoryFilter]);
 
   const uncountedFavorites = useMemo(() => {
     if (!products) return [];
@@ -258,8 +286,51 @@ export function OrderPage() {
         </p>
       )}
 
+      {hasItems && (
+        <div className="flex flex-col sm:flex-row gap-3">
+          <select
+            value={locationFilter}
+            onChange={(e) => setLocationFilter(e.target.value)}
+            className="rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="all">Todos os locais</option>
+            {sortedLocations.map((l) => (
+              <option key={l.id} value={l.id}>
+                {l.name}
+              </option>
+            ))}
+          </select>
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="all">Todas as categorias</option>
+            <option value="favorites">Favoritos ⭐</option>
+            {sortedCategories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Pesquisar por nome..."
+            className="flex-1 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+      )}
+
+      {hasItems && filteredItems.length === 0 && (
+        <p className="text-center text-slate-500 dark:text-slate-400 py-12">
+          Nenhum produto encontrado.
+        </p>
+      )}
+
       <div className="space-y-3">
-        {pendingItems.map((item) => {
+        {filteredItems.map((item) => {
           const ordered = item.orderItem?.status === 'ordered';
           return (
             <div
