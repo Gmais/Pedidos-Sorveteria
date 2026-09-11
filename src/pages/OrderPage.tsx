@@ -110,6 +110,10 @@ export function OrderPage() {
       });
     }
     return items.sort((a, b) => {
+      const aOrdered = a.orderItem?.status === 'ordered';
+      const bOrdered = b.orderItem?.status === 'ordered';
+      if (aOrdered && !bOrdered) return 1;
+      if (!aOrdered && bOrdered) return -1;
       if (a.product.favorite && !b.product.favorite) return -1;
       if (!a.product.favorite && b.product.favorite) return 1;
       return a.product.name.localeCompare(b.product.name);
